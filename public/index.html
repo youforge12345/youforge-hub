@@ -2633,11 +2633,6 @@ html[data-theme="light"] .product-card:hover{
         <span class="yf-sidebar__label">Payment Approvals</span>
         <span class="u-hidden" id="adminPendingBadge" style="margin-left:auto; background:var(--c-warning); color:#1a1200; font-size:10px; font-weight:700; border-radius:999px; padding:1px 7px;">0</span>
       </a></li>
-      <li><a class="yf-sidebar__link" href="#" data-route="admin-refunds" data-protected="true" data-admin-only="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 4 3 10 9 10"/></svg>
-        <span class="yf-sidebar__label">Refund Requests</span>
-        <span class="u-hidden" id="adminRefundsPendingBadge" style="margin-left:auto; background:var(--c-warning); color:#1a1200; font-size:10px; font-weight:700; border-radius:999px; padding:1px 7px;">0</span>
-      </a></li>
       <li><a class="yf-sidebar__link" href="#" data-route="admin-earnings" data-protected="true" data-admin-only="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
         <span class="yf-sidebar__label">Earnings Dashboard</span>
@@ -2877,10 +2872,6 @@ html[data-theme="light"] .product-card:hover{
             <div class="faq-item">
               <div class="faq-item__q"><span>What payment methods are supported?</span><span class="faq-item__icon">+</span></div>
               <div class="faq-item__a">We support all major credit/debit cards and popular digital wallets. More options will be added as the platform grows.</div>
-            </div>
-            <div class="faq-item">
-              <div class="faq-item__q"><span>Can I get a refund if a product doesn't work for me?</span><span class="faq-item__icon">+</span></div>
-              <div class="faq-item__a">Yes — reach out within 7 days of purchase through your dashboard and our support team will review your request.</div>
             </div>
             <div class="faq-item">
               <div class="faq-item__q"><span>How do I become a seller on YouForge Hub?</span><span class="faq-item__icon">+</span></div>
@@ -3692,7 +3683,7 @@ html[data-theme="light"] .product-card:hover{
       <div class="yf-page u-hidden" id="page-refund">
         <section class="u-mb-4">
           <h1>Refund Policy</h1>
-          <p class="u-text-muted">When and how refunds are handled</p>
+          <p class="u-text-muted">Our policy on refunds</p>
         </section>
         <div class="profile-section legal-content" id="legalRefundContent">
           <div class="skeleton skeleton--text w-60"></div>
@@ -4268,50 +4259,6 @@ html[data-theme="light"] .product-card:hover{
               <tr class="skeleton-row"><td colspan="9"><div class="skeleton skeleton--text w-60"></div></td></tr>
               <tr class="skeleton-row"><td colspan="9"><div class="skeleton skeleton--text w-60"></div></td></tr>
               <tr class="skeleton-row"><td colspan="9"><div class="skeleton skeleton--text w-60"></div></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- ==========================================================
-           SECTION 23c: ADMIN — REFUND REQUESTS QUEUE (added)
-           Rendered by YF.admin.renderRefundRequestsPage(). Reads the
-           "refundRequests" collection (buyer-initiated via
-           YF.refunds.request()). Approve calls YF.refunds.approve(),
-           which itself calls the existing YF.orders.refundOrder().
-           ========================================================== -->
-      <div class="yf-page u-hidden" id="page-admin-refunds">
-        <section class="u-mb-4">
-          <h1>Refund Requests</h1>
-          <p class="u-text-muted">Review refund requests submitted by buyers on their approved orders</p>
-        </section>
-
-        <div class="admin-toolbar">
-          <div class="admin-toolbar__filters" id="refundRequestsStatusTabs">
-            <button type="button" class="order-status-tab is-active" data-refund-filter="pending">Pending</button>
-            <button type="button" class="order-status-tab" data-refund-filter="approved">Approved</button>
-            <button type="button" class="order-status-tab" data-refund-filter="declined">Declined</button>
-            <button type="button" class="order-status-tab" data-refund-filter="all">All</button>
-          </div>
-        </div>
-
-        <div class="data-table-wrap">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Buyer</th>
-                <th>Product</th>
-                <th>Amount</th>
-                <th>Reason</th>
-                <th>Status</th>
-                <th>Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="adminRefundRequestsTableBody">
-              <tr class="skeleton-row"><td colspan="7"><div class="skeleton skeleton--text w-60"></div></td></tr>
-              <tr class="skeleton-row"><td colspan="7"><div class="skeleton skeleton--text w-60"></div></td></tr>
-              <tr class="skeleton-row"><td colspan="7"><div class="skeleton skeleton--text w-60"></div></td></tr>
             </tbody>
           </table>
         </div>
@@ -5245,7 +5192,7 @@ html[data-theme="light"] .product-card:hover{
               <h3 class="profile-section__title">Refund Policy</h3>
               <div class="form-group">
                 <label class="form-label" for="legalFormRefund">Page Content</label>
-                <textarea class="form-input" id="legalFormRefund" rows="8" placeholder="Explain when and how refunds are handled…"></textarea>
+                <textarea class="form-input" id="legalFormRefund" rows="8" placeholder="Explain your refund policy (e.g. all sales final)…"></textarea>
                 <div class="form-hint">Leave a blank line between paragraphs.</div>
               </div>
               <button class="btn btn--primary" type="submit" id="legalRefundSubmitBtn">Save Refund Policy</button>
@@ -6597,32 +6544,6 @@ Take a screenshot of the successful payment confirmation."></textarea>
 </div>
 
 <!-- ==========================================================
-     SECTION 23c: ADMIN — DECLINE REFUND REQUEST MODAL (added)
-     ========================================================== -->
-<div class="modal-backdrop" id="declineRefundModal">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="declineRefundModalTitle">
-    <div class="modal__header">
-      <h3 class="modal__title" id="declineRefundModalTitle">Decline Refund Request</h3>
-      <button class="modal__close" data-action="close-modal" aria-label="Close">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-    <div class="modal__body">
-      <input type="hidden" id="declineRefundRequestId" value="">
-      <p class="u-text-muted" style="font-size:var(--fs-sm);">This will mark the refund request as declined and notify the buyer. The order itself is left unchanged.</p>
-      <div class="form-group u-mt-4">
-        <label class="form-label" for="declineRefundNote">Note <span class="u-text-muted" style="text-transform:none;">(optional, shown to the buyer)</span></label>
-        <textarea class="form-input" id="declineRefundNote" rows="3" placeholder="e.g. Outside our refund window"></textarea>
-      </div>
-    </div>
-    <div class="modal__footer">
-      <button class="btn btn--ghost" data-action="close-modal" type="button">Cancel</button>
-      <button class="btn btn--danger" id="confirmDeclineRefundBtn" type="button">Decline Refund</button>
-    </div>
-  </div>
-</div>
-
-<!-- ==========================================================
      SECTION 20j: ADMIN — USER ACTIVITY MODAL (read-only)
      Profile summary + this user's recent orders. Reuses the SAME
      admin-wide orders subscription the Payment Approval Queue
@@ -6765,29 +6686,6 @@ Take a screenshot of the successful payment confirmation."></textarea>
   <span class="compare-bar__count" id="compareBarCount">0 selected</span>
   <button class="btn btn--primary btn--sm" id="compareBarViewBtn">Compare</button>
   <button class="btn btn--ghost btn--sm" id="compareBarClearBtn">Clear</button>
-</div>
-
-<div class="modal-backdrop" id="refundRequestModal">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="refundRequestModalTitle">
-    <div class="modal__header">
-      <h3 class="modal__title" id="refundRequestModalTitle">Request Refund</h3>
-      <button class="modal__close" data-action="close-modal" aria-label="Close">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-    <div class="modal__body">
-      <p class="u-text-muted" style="font-size:var(--fs-sm)">Tell us why you'd like a refund for this order. Our team will review your request.</p>
-      <div class="form-group u-mt-3">
-        <label class="form-label" for="refundRequestReason">Reason</label>
-        <textarea class="form-input" id="refundRequestReason" rows="4" placeholder="e.g. Product doesn't match the description…"></textarea>
-      </div>
-      <p class="u-hidden" id="refundRequestError" style="color:var(--c-danger); font-size:var(--fs-sm);"></p>
-    </div>
-    <div class="modal__footer">
-      <button class="btn btn--ghost" data-action="close-modal" type="button">Cancel</button>
-      <button class="btn btn--primary" id="refundRequestSubmitBtn" type="button">Submit Request</button>
-    </div>
-  </div>
 </div>
 
 <div class="modal-backdrop" id="compareModal">
@@ -8594,113 +8492,6 @@ Take a screenshot of the successful payment confirmation."></textarea>
   };
 
   // -----------------------------------------------------------
-  // SECTION 23c: YF.refunds — Customer-initiated Refund Requests (added)
-  // Buyers can request a refund on an already-approved order without
-  // ever writing to the "orders" doc directly (matching the documented
-  // orders security rule above, which reserves order writes for
-  // admins only). Instead this writes to its own top-level
-  // "refundRequests" collection; an admin then Approves (which calls
-  // the existing YF.orders.refundOrder() to actually flip the order's
-  // status) or Declines.
-  //
-  // Matching Firestore security rule (same pattern as "reviews" above):
-  //   match /refundRequests/{id} {
-  //     allow create: if request.auth != null
-  //       && request.resource.data.uid == request.auth.uid
-  //       && request.resource.data.status == "pending";
-  //     allow read: if request.auth != null
-  //       && (resource.data.uid == request.auth.uid || isAdmin());
-  //     allow update: if request.auth != null && isAdmin();
-  //     allow delete: if false;
-  //   }
-  // -----------------------------------------------------------
-  window.YF.refunds = {
-    /** Submit a refund request for one of the current user's own
-     *  approved orders. Rejects if the order isn't the buyer's own,
-     *  isn't in "approved" status, or already has a pending request. */
-    async request(order, reason){
-      const user = window.YF.auth && window.YF.auth.currentUser;
-      if (!user) throw new Error("You must be logged in to request a refund.");
-      if (!order || order.uid !== user.uid) throw new Error("This isn't your order.");
-      if (order.status !== "approved") throw new Error("Only approved orders can be refunded.");
-      const existing = await getDocs(query(
-        collection(db, "refundRequests"),
-        where("orderId", "==", order.id),
-        where("status", "==", "pending")
-      ));
-      if (!existing.empty) throw new Error("You already have a pending refund request for this order.");
-      const cleanReason = String(reason || "").trim().slice(0, 500);
-      if (!cleanReason) throw new Error("Please tell us why you'd like a refund.");
-      await addDoc(collection(db, "refundRequests"), {
-        orderId: order.id,
-        uid: user.uid,
-        buyerEmail: order.buyerEmail || user.email || "",
-        buyerName: order.buyerName || user.displayName || "",
-        productId: order.productId || "",
-        productTitle: order.productTitle || "",
-        amount: order.amount || 0,
-        reason: cleanReason,
-        status: "pending",
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
-      });
-    },
-
-    /** The current user's own pending refund requests, keyed by
-     *  orderId — used to disable the "Request Refund" button on an
-     *  order that's already awaiting review. */
-    async listMyPendingOrderIds(){
-      const user = window.YF.auth && window.YF.auth.currentUser;
-      if (!user) return new Set();
-      try{
-        const snap = await getDocs(query(
-          collection(db, "refundRequests"),
-          where("uid", "==", user.uid),
-          where("status", "==", "pending")
-        ));
-        return new Set(snap.docs.map(d => d.data().orderId));
-      }catch(err){ console.error("YF.refunds: listMyPendingOrderIds failed", err); return new Set(); }
-    },
-
-    /** ADMIN — live-subscribes to every refund request. Caller MUST
-     *  independently verify isAdmin() first, matching YF.orders. */
-    subscribeAll(callback){
-      try{
-        return onSnapshot(collection(db, "refundRequests"), (snap) => {
-          callback(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-        }, (err) => { console.error("YF.refunds: subscribeAll failed", err); callback([]); });
-      }catch(err){ console.error("YF.refunds: subscribeAll threw", err); callback([]); return () => {}; }
-    },
-
-    /** ADMIN — approve a refund request: flips the underlying order to
-     *  "refunded" via the existing YF.orders.refundOrder() (which also
-     *  notifies the buyer), then marks this request approved. */
-    async approve(request){
-      if (!request || !request.id) throw new Error("Missing refund request.");
-      await window.YF.orders.refundOrder(request.orderId, request.reason);
-      await updateDoc(doc(db, "refundRequests", request.id), { status: "approved", updatedAt: serverTimestamp() });
-    },
-
-    /** ADMIN — decline a refund request without touching the order. */
-    async decline(request, adminNote){
-      if (!request || !request.id) throw new Error("Missing refund request.");
-      await updateDoc(doc(db, "refundRequests", request.id), {
-        status: "declined",
-        adminNote: String(adminNote || "").slice(0, 500),
-        updatedAt: serverTimestamp()
-      });
-      if (window.YF.notifications && request.uid){
-        window.YF.notifications.create({
-          uid: request.uid, type: "info", title: "Refund request declined",
-          message: adminNote
-            ? `Your refund request for "${request.productTitle || "your order"}" was declined: ${adminNote}`
-            : `Your refund request for "${request.productTitle || "your order"}" was declined.`
-        });
-      }
-    }
-  };
-
-  // -----------------------------------------------------------
   // SECTION 14f: YF.licenses — License Key + Download module
   //
   // Licenses live in a top-level "licenses" collection. Every license
@@ -10035,7 +9826,6 @@ Take a screenshot of the successful payment confirmation."></textarea>
       if (route === "admin-products" && window.YF.admin) window.YF.admin.renderProductsPage();
       if (route === "admin-categories" && window.YF.admin) window.YF.admin.renderCategoriesPage();
       if (route === "admin-payments" && window.YF.admin) window.YF.admin.renderPaymentsPage();
-      if (route === "admin-refunds" && window.YF.admin) window.YF.admin.renderRefundRequestsPage();
       if (route === "admin-bundles" && window.YF.admin) window.YF.admin.renderAdminBundlesPage();
       if (route === "admin-licenses" && window.YF.admin) window.YF.admin.renderAdminLicensesPage();
       if (route === "admin-payment-methods" && window.YF.admin) window.YF.admin.renderPaymentMethodsPage();
@@ -10232,7 +10022,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
       // bounce them back to Home so the section never stays rendered
       // without the role backing it.
       {
-        const adminPageIds = ["page-admin-dashboard", "page-admin-products", "page-admin-categories", "page-admin-bundles", "page-admin-payments", "page-admin-refunds", "page-admin-payment-methods", "page-admin-social-settings", "page-admin-settings", "page-admin-communication", "page-admin-legal", "page-admin-coupons", "page-admin-announcements", "page-admin-notification-templates", "page-admin-activity-logs"];
+        const adminPageIds = ["page-admin-dashboard", "page-admin-products", "page-admin-categories", "page-admin-bundles", "page-admin-payments", "page-admin-payment-methods", "page-admin-social-settings", "page-admin-settings", "page-admin-communication", "page-admin-legal", "page-admin-coupons", "page-admin-announcements", "page-admin-notification-templates", "page-admin-activity-logs"];
         const openAdminPageId = adminPageIds.find(id => {
           const el = document.getElementById(id);
           return el && !el.classList.contains("u-hidden");
@@ -10721,7 +10511,6 @@ Take a screenshot of the successful payment confirmation."></textarea>
     // different user, never shared across users.
     let wishlistIds = new Set();
     let favoriteIds = new Set();
-    let refundPendingOrderIds = new Set(); // SECTION 23c — added
     let cartPageCoupon = null; // { code, discountAmount, coupon } | null — applied on the Cart page
     const state = { search:"", category:"all", minPrice:null, maxPrice:null, sort:"popular", page:1, perPage:8 };
 
@@ -12654,8 +12443,6 @@ Take a screenshot of the successful payment confirmation."></textarea>
       const meta = (window.YF.orders.ORDER_STATUS_META && window.YF.orders.ORDER_STATUS_META[o.status])
         || { label: o.status || "Unknown", badgeClass: "status-badge--pending", desc: "" };
       const dateMs = (o.createdAt && o.createdAt.toMillis) ? o.createdAt.toMillis() : (o.createdAt || Date.now());
-      const refundPending = refundPendingOrderIds.has(o.id);
-      const canRequestRefund = o.status === "approved" && !refundPending;
       return `
         <div class="order-card" data-order-id="${o.id}" data-order-status="${escapeHtml(o.status || "")}">
           <img class="order-card__media" src="${o.productImage || window.YF_NO_IMAGE}" alt="${escapeHtml(o.productTitle || "Product")}" loading="lazy" decoding="async">
@@ -12670,8 +12457,6 @@ Take a screenshot of the successful payment confirmation."></textarea>
             ${orderTimelineHTML(o)}
             <div class="order-card__desc">${escapeHtml(meta.desc)}</div>
             ${o.screenshotURL ? `<div class="order-card__proof-link"><a href="${o.screenshotURL}" target="_blank" rel="noopener">View payment screenshot →</a></div>` : ""}
-            ${refundPending ? `<div class="order-card__proof-link">Refund request submitted — awaiting review.</div>` : ""}
-            ${canRequestRefund ? `<button type="button" class="btn btn--outline btn--sm u-mt-2" data-request-refund="${o.id}">Request Refund</button>` : ""}
             ${(o.status === "approved" || o.status === "refunded") ? `<button type="button" class="btn btn--ghost btn--sm u-mt-2" data-download-invoice="${o.id}">Download Invoice</button>` : ""}
           </div>
           <div class="order-card__side">
@@ -12688,7 +12473,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
       listEl.innerHTML = filtered.length
         ? filtered.map(orderCardHTML).join("")
         : `<p class="u-text-muted">${ordersCache.length ? "No orders match this filter." : "No orders yet — products you buy will show up here as soon as you submit payment proof."}</p>`;
-      bindRefundRequestButtons(listEl);
+      bindInvoiceButtons(listEl);
     }
 
     function bindOrdersTabs(){
@@ -12704,23 +12489,8 @@ Take a screenshot of the successful payment confirmation."></textarea>
       });
     }
 
-    /* ---------- Request Refund button wiring (SECTION 23c — added) ----------
-       Opens the shared #refundRequestModal, remembers which order it's
-       for, and submits via YF.refunds.request() on confirm. */
-    let refundRequestTargetOrder = null;
-    function bindRefundRequestButtons(container){
-      container.querySelectorAll("[data-request-refund]").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const id = btn.dataset.requestRefund;
-          refundRequestTargetOrder = ordersCache.find(o => o.id === id) || null;
-          const reasonEl = document.getElementById("refundRequestReason");
-          const errEl = document.getElementById("refundRequestError");
-          if (reasonEl) reasonEl.value = "";
-          if (errEl) errEl.classList.add("u-hidden");
-          if (window.YF.ui) window.YF.ui.openModal("refundRequestModal");
-        });
-      });
-      // ---- Invoice download (SECTION 23e — added) ----
+    /* ---------- Invoice download button wiring ---------- */
+    function bindInvoiceButtons(container){
       container.querySelectorAll("[data-download-invoice]").forEach(btn => {
         btn.addEventListener("click", () => {
           const id = btn.dataset.downloadInvoice;
@@ -12769,27 +12539,6 @@ Take a screenshot of the successful payment confirmation."></textarea>
       doc.save(`invoice-${o.id.slice(0, 8)}.pdf`);
     }
 
-    async function submitRefundRequest(){
-      const reasonEl = document.getElementById("refundRequestReason");
-      const errEl = document.getElementById("refundRequestError");
-      const submitBtn = document.getElementById("refundRequestSubmitBtn");
-      if (!refundRequestTargetOrder || !window.YF.refunds) return;
-      const reason = reasonEl ? reasonEl.value : "";
-      if (submitBtn) submitBtn.disabled = true;
-      try{
-        await window.YF.refunds.request(refundRequestTargetOrder, reason);
-        refundPendingOrderIds.add(refundRequestTargetOrder.id);
-        if (window.YF.ui) window.YF.ui.closeModal("refundRequestModal");
-        window.YF.ui.toast({ type:"success", title:"Refund requested", message:"We'll review your request and get back to you." });
-        renderOrdersList();
-        renderOverviewPanel();
-      }catch(err){
-        if (errEl){ errEl.textContent = err.message || "Couldn't submit your refund request."; errEl.classList.remove("u-hidden"); }
-      }finally{
-        if (submitBtn) submitBtn.disabled = false;
-      }
-    }
-
     /** Renders the Payment History page for the currently signed-in
      *  user. Always re-fetches from Firestore (uid-scoped) so status
      *  updates made by an admin are reflected on next visit. */
@@ -12803,7 +12552,6 @@ Take a screenshot of the successful payment confirmation."></textarea>
       }
       listEl.innerHTML = `<div class="skeleton skeleton--text w-60"></div><div class="skeleton skeleton--text w-40"></div><div class="skeleton skeleton--text w-60"></div>`;
       ordersCache = await window.YF.orders.listMyOrders();
-      if (window.YF.refunds) refundPendingOrderIds = await window.YF.refunds.listMyPendingOrderIds();
       renderOrdersList();
     }
 
@@ -12973,7 +12721,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
           ? recent.map(orderCardHTML).join("")
           : `<p class="u-text-muted">No orders yet — products you buy will show up here.</p>`;
         bindOrderApprovalButtons(recentEl);
-        bindRefundRequestButtons(recentEl);
+        bindInvoiceButtons(recentEl);
       }
 
       const notifEl = document.getElementById("overviewNotifications");
@@ -13012,7 +12760,6 @@ Take a screenshot of the successful payment confirmation."></textarea>
         window.YF.licenses.listMyLicenses(),
         window.YF.licenses.listMyDownloads()
       ]);
-      if (window.YF.refunds) refundPendingOrderIds = await window.YF.refunds.listMyPendingOrderIds();
       renderLicensesList();
       renderDownloadsList();
       renderOverviewPanel();
@@ -13937,9 +13684,6 @@ Take a screenshot of the successful payment confirmation."></textarea>
       subscribeToFirestore();
       subscribeCategoriesPublic();
       subscribeBundlesPublic();
-
-      // Refund request modal submit (SECTION 23c — added, one-time bind).
-      document.getElementById("refundRequestSubmitBtn")?.addEventListener("click", submitRefundRequest);
 
       // Keep product cards' "In Cart" state and the Cart page itself
       // live as the cart changes (add/remove/qty from any tab).
@@ -15895,11 +15639,10 @@ Take a screenshot of the successful payment confirmation."></textarea>
       about: "YouForge Hub is a premium marketplace for digital products — templates, courses, plugins, presets and more, built by and for creators.\n\nWe're on a mission to make it simple for creators to sell their work and for buyers to discover high-quality digital tools they can trust.",
       privacy: "We collect only the information needed to run your account and process your orders, such as your name, email, and payment confirmation details.\n\nWe never sell your personal information to third parties. Data is stored securely and used solely to provide and improve our services.\n\nYou may request a copy of your data or ask us to delete your account at any time by contacting support.",
       terms: "By creating an account or making a purchase on YouForge Hub, you agree to use the platform lawfully and to respect the intellectual property rights of sellers.\n\nDigital products are licensed, not sold outright — see each product's listing for its specific license terms.\n\nWe reserve the right to suspend accounts found to be in violation of these terms, including fraudulent payments or abuse of other users.",
-      refund: "If a product doesn't work as described, contact our support team within 7 days of purchase through your dashboard and we'll review your request.\n\nRefunds are issued to the original payment method once approved. Some products may be marked non-refundable — this will always be stated on the product page before you buy.",
+      refund: "All sales on YouForge Hub are final. Because our products are digital and delivered instantly upon payment approval, we do not offer refunds, returns, or exchanges once a license has been issued.\n\nWe encourage you to carefully review each product's description, screenshots, and requirements before purchasing. If you have questions about whether a product is right for you, please contact our support team before buying.\n\nIn the rare case of a duplicate charge or a technical error on our end, please contact support and we'll review it on a case-by-case basis.",
       faq: [
         { q: "How do I download a product after purchase?", a: "Once your payment is confirmed, the product becomes instantly available in \"My Purchases\" in your dashboard, along with a permanent download link." },
         { q: "What payment methods are supported?", a: "We support all major credit/debit cards and popular digital wallets. More options will be added as the platform grows." },
-        { q: "Can I get a refund if a product doesn't work for me?", a: "Yes — reach out within 7 days of purchase through your dashboard and our support team will review your request." },
         { q: "How do I become a seller on YouForge Hub?", a: "Create a free account, then apply for a seller profile from your dashboard. Approved sellers can list products through the Admin panel." }
       ]
     };
@@ -16256,11 +15999,6 @@ Take a screenshot of the successful payment confirmation."></textarea>
     let ordersUnsub = null;
     const orderFilters = { status: "pending", search: "" };
 
-    // ---- Refund Requests state (SECTION 23c — added) ----
-    let refundRequestsCache = [];
-    let refundRequestsUnsub = null;
-    let refundRequestsFilter = "pending";
-
     // ---- Withdrawal Requests state (Phase B) ----
     let withdrawalsCache = [];
     let withdrawalsUnsub = null;
@@ -16435,6 +16173,15 @@ Take a screenshot of the successful payment confirmation."></textarea>
             };
           });
           renderProductsTable();
+          // FIX: if the New/Edit Bundle modal happens to be open while
+          // products are still loading, refresh its checklist too once
+          // productsCache actually has data.
+          const bundleModal = document.getElementById("bundleFormModal");
+          if (bundleModal && bundleModal.classList.contains("is-open")){
+            const editingId = document.getElementById("bundleFormId").value;
+            const editingBundle = editingId ? bundlesCache.find(b => b.id === editingId) : null;
+            renderBundleProductsChecklist(editingBundle ? editingBundle.productIds : []);
+          }
         }, (err) => {
           console.error("YF.admin: products onSnapshot error", err);
           productsCache = [];
@@ -17718,6 +17465,11 @@ Take a screenshot of the successful payment confirmation."></textarea>
         return;
       }
       bindBundlesPage();
+      // FIX: the bundle form's product checklist reads productsCache,
+      // which was previously only ever populated by visiting Product
+      // Management first. Ensure it's loaded here too so Bundles works
+      // standalone.
+      if (!productsUnsub) subscribeProducts();
       if (!bundlesUnsub) subscribeBundles(); else renderBundlesTable();
     }
 
@@ -18897,174 +18649,6 @@ Take a screenshot of the successful payment confirmation."></textarea>
       }
       bindPaymentsPage();
       if (!ordersUnsub) subscribeOrders(); else renderOrdersTable();
-    }
-
-    /* ---------------------------------------------------------
-       REFUND REQUESTS QUEUE (SECTION 23c — added)
-       Reads the "refundRequests" collection YF.refunds writes to
-       (buyer-initiated). Approve calls YF.refunds.approve(), which
-       itself calls the existing YF.orders.refundOrder() so the order
-       + buyer notification path stays exactly as it already is.
-       --------------------------------------------------------- */
-
-    function subscribeRefundRequests(){
-      if (refundRequestsUnsub){ try{ refundRequestsUnsub(); }catch(e){} refundRequestsUnsub = null; }
-      if (!(window.YF.refunds && window.YF.refunds.subscribeAll)){
-        refundRequestsCache = [];
-        renderRefundRequestsTable();
-        return;
-      }
-      refundRequestsUnsub = window.YF.refunds.subscribeAll((requests) => {
-        refundRequestsCache = requests.sort((a, b) => {
-          const at = (a.createdAt && a.createdAt.toMillis) ? a.createdAt.toMillis() : (a.createdAt || 0);
-          const bt = (b.createdAt && b.createdAt.toMillis) ? b.createdAt.toMillis() : (b.createdAt || 0);
-          return bt - at;
-        });
-        updateRefundRequestsBadge();
-        renderRefundRequestsTable();
-      });
-    }
-
-    function updateRefundRequestsBadge(){
-      const badge = document.getElementById("adminRefundsPendingBadge");
-      if (!badge) return;
-      const count = refundRequestsCache.filter(r => r.status === "pending").length;
-      badge.textContent = String(count);
-      badge.classList.toggle("u-hidden", count === 0);
-    }
-
-    function getFilteredRefundRequests(){
-      if (refundRequestsFilter === "all") return refundRequestsCache;
-      return refundRequestsCache.filter(r => r.status === refundRequestsFilter);
-    }
-
-    function refundRequestDateLabel(r){
-      const t = (r.createdAt && r.createdAt.toMillis) ? r.createdAt.toMillis() : (typeof r.createdAt === "number" ? r.createdAt : 0);
-      return t ? new Date(t).toLocaleDateString(undefined, { year:"numeric", month:"short", day:"numeric" }) : "—";
-    }
-
-    function refundRequestStatusBadge(status){
-      const meta = {
-        pending:  { label: "Pending",  badgeClass: "status-badge--pending" },
-        approved: { label: "Approved", badgeClass: "status-badge--approved" },
-        declined: { label: "Declined", badgeClass: "status-badge--rejected" }
-      }[status] || { label: status || "Unknown", badgeClass: "status-badge--pending" };
-      return `<span class="status-badge ${meta.badgeClass}">${escapeHtml(meta.label)}</span>`;
-    }
-
-    function renderRefundRequestsTable(){
-      const tbody = document.getElementById("adminRefundRequestsTableBody");
-      if (!tbody) return;
-      const list = getFilteredRefundRequests();
-      if (!list.length){
-        tbody.innerHTML = `<tr><td colspan="7"><div class="admin-empty-state">No refund requests match this view.</div></td></tr>`;
-        return;
-      }
-      tbody.innerHTML = list.map(r => {
-        const actions = r.status === "pending"
-          ? `<div class="admin-row-actions">
-              <button type="button" class="admin-action-btn admin-action-btn--success" data-approve-refund="${r.id}">Approve</button>
-              <button type="button" class="admin-action-btn admin-action-btn--danger" data-decline-refund="${r.id}">Decline</button>
-            </div>`
-          : `<span class="u-text-muted">—</span>`;
-        return `
-        <tr data-refund-row="${r.id}">
-          <td>
-            <div class="order-buyer__name">${escapeHtml(r.buyerName || "Unknown buyer")}</div>
-            <div class="order-buyer__email">${escapeHtml(r.buyerEmail || "")}</div>
-          </td>
-          <td class="u-text-muted">${escapeHtml(r.productTitle || "Product")}</td>
-          <td class="order-amount">${formatPrice(r.amount)}</td>
-          <td class="u-text-muted" style="max-width:260px;">${escapeHtml(r.reason || "—")}</td>
-          <td>${refundRequestStatusBadge(r.status)}</td>
-          <td class="u-text-muted">${refundRequestDateLabel(r)}</td>
-          <td>${actions}</td>
-        </tr>`;
-      }).join("");
-    }
-
-    async function approveRefundRequest(requestId){
-      if (!isAdmin()) return;
-      const request = refundRequestsCache.find(r => r.id === requestId);
-      if (!request) return;
-      const btn = document.querySelector(`[data-refund-row="${requestId}"] [data-approve-refund]`);
-      if (btn){ btn.disabled = true; btn.textContent = "Approving…"; }
-      try{
-        await window.YF.refunds.approve(request);
-        window.YF.ui.toast({ type:"success", title:"Refund approved", message:"The order was refunded and the buyer notified." });
-        logActivity("refund-approve", `Approved refund request for order ${request.orderId}`);
-      }catch(err){
-        console.error("YF.admin: approveRefundRequest failed", err);
-        window.YF.ui.toast({ type:"danger", title:"Couldn't approve refund", message: err.message || "Please try again." });
-      }finally{
-        if (btn){ btn.disabled = false; btn.textContent = "Approve"; }
-      }
-    }
-
-    function openDeclineRefund(requestId){
-      document.getElementById("declineRefundRequestId").value = requestId;
-      document.getElementById("declineRefundNote").value = "";
-      window.YF.ui.openModal("declineRefundModal");
-    }
-
-    async function performDeclineRefund(){
-      if (!isAdmin()) return;
-      const requestId = document.getElementById("declineRefundRequestId").value;
-      const note = document.getElementById("declineRefundNote").value.trim();
-      if (!requestId) return;
-      const request = refundRequestsCache.find(r => r.id === requestId);
-      const btn = document.getElementById("confirmDeclineRefundBtn");
-      btn.disabled = true; btn.textContent = "Working…";
-      try{
-        await window.YF.refunds.decline(request || { id: requestId }, note);
-        window.YF.ui.toast({ type:"info", title:"Refund declined", message:"The buyer has been notified." });
-        logActivity("refund-decline", `Declined refund request ${requestId}${note ? " — " + note : ""}`);
-        window.YF.ui.closeModal("declineRefundModal");
-      }catch(err){
-        console.error("YF.admin: performDeclineRefund failed", err);
-        window.YF.ui.toast({ type:"danger", title:"Couldn't decline refund", message: err.message || "Please try again." });
-      }finally{
-        btn.disabled = false; btn.textContent = "Decline Refund";
-      }
-    }
-
-    function bindRefundRequestsPage(){
-      const tbody = document.getElementById("adminRefundRequestsTableBody");
-      if (tbody && tbody.dataset.bound !== "true"){
-        tbody.addEventListener("click", (e) => {
-          const approveBtn = e.target.closest("[data-approve-refund]");
-          const declineBtn = e.target.closest("[data-decline-refund]");
-          if (approveBtn) approveRefundRequest(approveBtn.dataset.approveRefund);
-          if (declineBtn) openDeclineRefund(declineBtn.dataset.declineRefund);
-        });
-        tbody.dataset.bound = "true";
-      }
-      const confirmBtn = document.getElementById("confirmDeclineRefundBtn");
-      if (confirmBtn && confirmBtn.dataset.bound !== "true"){
-        confirmBtn.addEventListener("click", performDeclineRefund);
-        confirmBtn.dataset.bound = "true";
-      }
-      const tabsEl = document.getElementById("refundRequestsStatusTabs");
-      if (tabsEl && tabsEl.dataset.bound !== "true"){
-        tabsEl.dataset.bound = "true";
-        tabsEl.querySelectorAll("[data-refund-filter]").forEach(tabBtn => {
-          tabBtn.addEventListener("click", () => {
-            refundRequestsFilter = tabBtn.dataset.refundFilter;
-            tabsEl.querySelectorAll("[data-refund-filter]").forEach(b => b.classList.toggle("is-active", b === tabBtn));
-            renderRefundRequestsTable();
-          });
-        });
-      }
-    }
-
-    /** Entry point wired from handleRouteClick for data-route="admin-refunds". */
-    function renderRefundRequestsPage(){
-      if (!isAdmin()){
-        window.YF.ui.navigateTo("home");
-        return;
-      }
-      bindRefundRequestsPage();
-      if (!refundRequestsUnsub) subscribeRefundRequests(); else renderRefundRequestsTable();
     }
 
     /* ---------------------------------------------------------
@@ -22420,7 +22004,6 @@ Take a screenshot of the successful payment confirmation."></textarea>
       renderEarningsPage, renderWithdrawalsPage, renderAffiliatesPage, renderAnalyticsPage,
       renderAdminTicketsPage, renderAdminChatPage, renderAdminBlogPage, renderAdminContactMessagesPage,
       renderReportsPage, renderBackupPage,
-      renderRefundRequestsPage,
       renderAdminBundlesPage
     };
   })();
