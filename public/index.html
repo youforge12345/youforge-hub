@@ -10240,14 +10240,25 @@ Take a screenshot of the successful payment confirmation."></textarea>
         document.body.classList.remove("sidebar-open");
       });
 
-      // Close mobile drawer on route click for better UX
-      document.querySelectorAll(".yf-sidebar__link").forEach(link => {
-        link.addEventListener("click", (e) => {
+      // Sidebar link clicks (SECTION 23g — fixed): event delegation on
+      // the sidebar container itself, NOT a direct addEventListener
+      // per link. The admin section's links are injected into the DOM
+      // later (only once a session is confirmed admin/support/
+      // product_manager — see injectAdminMarkup()), so binding
+      // directly to each link found at setup time would silently miss
+      // every admin link entirely. Delegating to #yfSidebar (which
+      // always exists) means ANY link added later — admin or
+      // otherwise — works without needing a separate re-bind step.
+      const sidebarEl = document.getElementById("yfSidebar");
+      if (sidebarEl){
+        sidebarEl.addEventListener("click", (e) => {
+          const link = e.target.closest(".yf-sidebar__link");
+          if (!link || !sidebarEl.contains(link)) return;
           e.preventDefault();
           handleRouteClick(link);
           if (isMobileViewport()) document.body.classList.remove("sidebar-open");
         });
-      });
+      }
     }
 
     /* ---------- Lightweight page router ----------
