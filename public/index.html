@@ -68,7 +68,15 @@
      ============================================================ -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Fonts optimized (SECTION 23g — added): the stylesheet loads via
+     preload+swap so it never blocks the initial render. The browser
+     starts fetching it immediately (preload priority) but text keeps
+     using the fallback font (Georgia/system) and paints right away;
+     once the real fonts arrive, onload flips this into an active
+     stylesheet and text swaps in (display=swap avoids any invisible-
+     text period). <noscript> keeps it working with JS disabled. -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
 
 <style>
 /* ============================================================
@@ -2600,6 +2608,7 @@ html[data-theme="light"] .product-card:hover{
   <nav data-auth-state="admin" class="u-hidden">
     <div class="yf-sidebar__section-title">Admin</div>
     <ul class="yf-sidebar__nav">
+<template id="tplAdminSidebarLinks"><!-- SECTION 23g — lazy-loaded admin sidebar links -->
       <li><a class="yf-sidebar__link" href="#" data-route="admin-dashboard" data-protected="true" data-admin-only="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
         <span class="yf-sidebar__label">Admin Dashboard</span>
@@ -2619,6 +2628,10 @@ html[data-theme="light"] .product-card:hover{
       <li><a class="yf-sidebar__link" href="#" data-route="admin-bundles" data-protected="true" data-admin-only="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41L13.42 20.58a2 2 0 0 1-2.83 0L2.5 12.5V2.5h10L20.59 10.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1.5"/></svg>
         <span class="yf-sidebar__label">Bundles</span>
+      </a></li>
+      <li><a class="yf-sidebar__link" href="#" data-route="admin-reviews-mod" data-protected="true" data-admin-only="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span class="yf-sidebar__label">Reviews</span>
       </a></li>
       <li><a class="yf-sidebar__link" href="#" data-route="admin-brokers" data-protected="true" data-admin-only="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>
@@ -2713,6 +2726,7 @@ html[data-theme="light"] .product-card:hover{
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg>
         <span class="yf-sidebar__label">Backup &amp; Restore</span>
       </a></li>
+</template>
     </ul>
   </nav>
 
@@ -2786,7 +2800,7 @@ html[data-theme="light"] .product-card:hover{
             </div>
             <button class="btn btn--ghost btn--sm" data-route="marketplace" data-nav>View All →</button>
           </div>
-          <div class="card-grid" id="featuredProductsGrid"><!-- YF.marketplace injects product cards --></div>
+          <div class="card-grid" id="featuredProductsGrid"><div class="card skeleton-card"><div class="skeleton skeleton--thumb"></div><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--text w-60"></div><div class="skeleton skeleton--text w-40"></div></div><div class="card skeleton-card"><div class="skeleton skeleton--thumb"></div><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--text w-60"></div><div class="skeleton skeleton--text w-40"></div></div><div class="card skeleton-card"><div class="skeleton skeleton--thumb"></div><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--text w-60"></div><div class="skeleton skeleton--text w-40"></div></div><div class="card skeleton-card"><div class="skeleton skeleton--thumb"></div><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--text w-60"></div><div class="skeleton skeleton--text w-40"></div></div></div>
         </section>
 
         <!-- ---------- RECENTLY VIEWED (SECTION 22: YF.recent) ----------
@@ -2825,7 +2839,7 @@ html[data-theme="light"] .product-card:hover{
             </div>
             <button class="btn btn--ghost btn--sm" data-route="marketplace" data-nav>View All →</button>
           </div>
-          <div class="card-grid" id="latestProductsGrid"></div>
+          <div class="card-grid" id="latestProductsGrid"><div class="card skeleton-card"><div class="skeleton skeleton--thumb"></div><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--text w-60"></div><div class="skeleton skeleton--text w-40"></div></div><div class="card skeleton-card"><div class="skeleton skeleton--thumb"></div><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--text w-60"></div><div class="skeleton skeleton--text w-40"></div></div><div class="card skeleton-card"><div class="skeleton skeleton--thumb"></div><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--text w-60"></div><div class="skeleton skeleton--text w-40"></div></div><div class="card skeleton-card"><div class="skeleton skeleton--thumb"></div><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--text w-60"></div><div class="skeleton skeleton--text w-40"></div></div></div>
         </section>
 
         <!-- ---------- POPULAR PRODUCTS ---------- -->
@@ -2837,7 +2851,7 @@ html[data-theme="light"] .product-card:hover{
             </div>
             <button class="btn btn--ghost btn--sm" data-route="marketplace" data-nav>View All →</button>
           </div>
-          <div class="card-grid" id="popularProductsGrid"></div>
+          <div class="card-grid" id="popularProductsGrid"><div class="card skeleton-card"><div class="skeleton skeleton--thumb"></div><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--text w-60"></div><div class="skeleton skeleton--text w-40"></div></div><div class="card skeleton-card"><div class="skeleton skeleton--thumb"></div><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--text w-60"></div><div class="skeleton skeleton--text w-40"></div></div><div class="card skeleton-card"><div class="skeleton skeleton--thumb"></div><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--text w-60"></div><div class="skeleton skeleton--text w-40"></div></div><div class="card skeleton-card"><div class="skeleton skeleton--thumb"></div><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--text w-60"></div><div class="skeleton skeleton--text w-40"></div></div></div>
         </section>
 
         <!-- ---------- TESTIMONIALS ----------
@@ -2946,7 +2960,7 @@ html[data-theme="light"] .product-card:hover{
             <div class="u-flex u-justify-between u-items-center u-mb-4">
               <span class="u-text-muted" id="resultsCount" style="font-size:var(--fs-sm)">Loading products…</span>
             </div>
-            <div class="card-grid" id="marketplaceProductsGrid"></div>
+            <div class="card-grid" id="marketplaceProductsGrid"><div class="card skeleton-card"><div class="skeleton skeleton--thumb"></div><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--text w-60"></div><div class="skeleton skeleton--text w-40"></div></div><div class="card skeleton-card"><div class="skeleton skeleton--thumb"></div><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--text w-60"></div><div class="skeleton skeleton--text w-40"></div></div><div class="card skeleton-card"><div class="skeleton skeleton--thumb"></div><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--text w-60"></div><div class="skeleton skeleton--text w-40"></div></div><div class="card skeleton-card"><div class="skeleton skeleton--thumb"></div><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--text w-60"></div><div class="skeleton skeleton--text w-40"></div></div></div>
             <div class="pagination" id="marketplacePagination"></div>
           </div>
 
@@ -3875,6 +3889,7 @@ html[data-theme="light"] .product-card:hover{
         </div>
       </div>
 
+<template id="tplAdminPages"><!-- SECTION 23g — lazy-loaded admin pages; injected into DOM only once an admin (or permitted sub-role) session is confirmed. See YF.roles / setAuthState. -->
       <!-- ==========================================================
            SECTION 20a: ADMIN DASHBOARD PAGE
            Rendered ONLY for role:"admin" — YF.admin.renderDashboard()
@@ -4135,6 +4150,46 @@ html[data-theme="light"] .product-card:hover{
               <tr class="skeleton-row"><td colspan="5"><div class="skeleton skeleton--text w-60"></div></td></tr>
               <tr class="skeleton-row"><td colspan="5"><div class="skeleton skeleton--text w-60"></div></td></tr>
               <tr class="skeleton-row"><td colspan="5"><div class="skeleton skeleton--text w-60"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==========================================================
+           SECTION 23g: ADMIN — REVIEWS MODERATION PAGE (added)
+           Rendered by YF.admin.renderReviewsPage(). Reads every review
+           via YF.reviews.listAllForAdmin(); Delete calls the same
+           YF.reviews.remove() a buyer's own "Delete my review" button
+           uses, which also recomputes that product's aggregate rating.
+           ========================================================== -->
+      <div class="yf-page u-hidden" id="page-admin-reviews-mod">
+        <section class="u-mb-4">
+          <h1>Reviews</h1>
+          <p class="u-text-muted">Moderate customer reviews across every product</p>
+        </section>
+
+        <div class="admin-toolbar">
+          <div class="admin-toolbar__filters">
+            <input type="text" class="form-input admin-search-input" id="adminReviewsSearch" placeholder="Search by product or reviewer…">
+          </div>
+        </div>
+
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Reviewer</th>
+                <th>Rating</th>
+                <th>Comment</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminReviewsTableBody">
+              <tr class="skeleton-row"><td colspan="6"><div class="skeleton skeleton--text w-60"></div></td></tr>
+              <tr class="skeleton-row"><td colspan="6"><div class="skeleton skeleton--text w-60"></div></td></tr>
+              <tr class="skeleton-row"><td colspan="6"><div class="skeleton skeleton--text w-60"></div></td></tr>
             </tbody>
           </table>
         </div>
@@ -5593,6 +5648,7 @@ html[data-theme="light"] .product-card:hover{
           <button class="btn btn--danger u-mt-4 u-hidden" type="button" id="restoreBackupBtn">Import &amp; Merge</button>
         </div>
       </div>
+</template>
 
     </div>
   </main>
@@ -5621,6 +5677,7 @@ html[data-theme="light"] .product-card:hover{
   </div>
 </div>
 
+<template id="tplAdminModals"><!-- SECTION 23g — lazy-loaded admin modals; injected into DOM only once an admin (or permitted sub-role) session is confirmed. See YF.roles / setAuthState. -->
 <!-- ==========================================================
      SECTION 20c: ADMIN — PRODUCT FORM MODAL (Create + Edit)
      Same modal/form handles both flows: YF.admin.openProductForm()
@@ -6632,6 +6689,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
     </div>
   </div>
 </div>
+</template>
 
 <!-- ---------- PUBLIC ANNOUNCEMENT POPUP MODAL ----------
      Populated by YF.announcements from the newest active doc with
@@ -7918,6 +7976,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       }, { merge: true });
+      await this._recomputeProductRating(productId);
       return { rating: numericRating, comment: String(comment || "").slice(0, 1000) };
     },
 
@@ -7929,6 +7988,47 @@ Take a screenshot of the successful payment confirmation."></textarea>
         const snap = await getDocs(q);
         return snap.docs.map(d => d.data());
       }catch(err){ console.error("YF.reviews: list failed", err); return []; }
+    },
+
+    /** SECTION 23g — added. Recomputes a product's aggregate `rating`
+     *  (rounded to 1 decimal) and `ratingCount` straight from every
+     *  review currently on file, then writes it back to the product
+     *  doc — always from source of truth (the reviews themselves),
+     *  never an incremental running total, so an edited or deleted
+     *  review can never leave a stale average behind. Called after
+     *  every submit/delete; never blocks the caller if it fails. */
+    async _recomputeProductRating(productId){
+      try{
+        const snap = await getDocs(query(collection(db, "reviews"), where("productId", "==", productId)));
+        const ratings = snap.docs.map(d => Number(d.data().rating) || 0).filter(r => r > 0);
+        const count = ratings.length;
+        const avg = count ? Math.round((ratings.reduce((s, r) => s + r, 0) / count) * 10) / 10 : 0;
+        await updateDoc(doc(db, "products", productId), { rating: avg, ratingCount: count });
+      }catch(err){ console.error("YF.reviews: recompute product rating failed", err); }
+    },
+
+    /** Delete a review — the review's own author, OR an admin
+     *  moderating inappropriate content, may call this. Always
+     *  recomputes the product's aggregate rating afterward. */
+    async remove(reviewId, productId){
+      await deleteDoc(doc(db, "reviews", reviewId));
+      if (productId) await this._recomputeProductRating(productId);
+    },
+
+    /** ADMIN — every review across every product, newest first.
+     *  Caller MUST independently verify isAdmin() first, matching
+     *  every other admin-only read in this file. */
+    async listAllForAdmin(){
+      try{
+        const snap = await getDocs(collection(db, "reviews"));
+        return snap.docs
+          .map(d => ({ id: d.id, ...d.data() }))
+          .sort((a, b) => {
+            const at = (a.createdAt && a.createdAt.toMillis) ? a.createdAt.toMillis() : 0;
+            const bt = (b.createdAt && b.createdAt.toMillis) ? b.createdAt.toMillis() : 0;
+            return bt - at;
+          });
+      }catch(err){ console.error("YF.reviews: listAllForAdmin failed", err); return []; }
     }
   };
 
@@ -9704,6 +9804,11 @@ Take a screenshot of the successful payment confirmation."></textarea>
      ---------------------------------------------------------- */
   window.YF = window.YF || {};
 
+  // SECTION 23g — Lazy-load admin DOM (added). Flips true the first
+  // time this session is confirmed to have any admin-level access;
+  // guards injectAdminMarkup() from running more than once.
+  let adminMarkupInjected = false;
+
   /* Shared neutral "no image" placeholder (inline SVG, no external
      request) used anywhere a product/user/order image is missing. */
   window.YF_NO_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 480 360'%3E%3Crect width='480' height='360' fill='%230a0908'/%3E%3Cpath d='M180 150h120v90H180z' fill='none' stroke='%233a3427' stroke-width='6'/%3E%3Ccircle cx='205' cy='175' r='10' fill='none' stroke='%233a3427' stroke-width='6'/%3E%3Cpath d='M180 225l45-40 35 30 30-25 30 35' fill='none' stroke='%233a3427' stroke-width='6'/%3E%3C/svg%3E";
@@ -9827,6 +9932,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
       if (route === "admin-categories" && window.YF.admin) window.YF.admin.renderCategoriesPage();
       if (route === "admin-payments" && window.YF.admin) window.YF.admin.renderPaymentsPage();
       if (route === "admin-bundles" && window.YF.admin) window.YF.admin.renderAdminBundlesPage();
+      if (route === "admin-reviews-mod" && window.YF.admin) window.YF.admin.renderReviewsModPage();
       if (route === "admin-licenses" && window.YF.admin) window.YF.admin.renderAdminLicensesPage();
       if (route === "admin-payment-methods" && window.YF.admin) window.YF.admin.renderPaymentMethodsPage();
       if (route === "admin-social-settings" && window.YF.admin) window.YF.admin.renderSocialSettingsPage();
@@ -9980,6 +10086,34 @@ Take a screenshot of the successful payment confirmation."></textarea>
        Called by the Firebase onAuthStateChanged listener with the real
        user's info: { name, email, role, verified }. Populates the navbar
        avatar/dropdown, role chip, and email-verification banner. */
+    /** SECTION 23g — Lazy-load admin DOM (added). Moves the admin
+     *  sidebar links, all ~27 admin pages, and every admin-only modal
+     *  from their inert <template> tags (parsed by the browser but
+     *  NEVER rendered/laid out) into the live DOM — but only the
+     *  first time a session is confirmed to have admin-level access.
+     *  A regular customer's browser never builds any of this DOM at
+     *  all, which is where the real load-time saving comes from —
+     *  the JS functions that operate on it (YF.admin.*) stay defined
+     *  as before (cheap; V8 lazy-compiles unused function bodies
+     *  anyway) since they're tightly closure-coupled to Firestore
+     *  helpers further up this same module and can't be safely
+     *  extracted without rewriting every call site. */
+    function injectAdminMarkup(){
+      if (adminMarkupInjected) return;
+      adminMarkupInjected = true;
+
+      const tplLinks = document.getElementById("tplAdminSidebarLinks");
+      const sidebarUl = document.querySelector('nav[data-auth-state="admin"] ul.yf-sidebar__nav');
+      if (tplLinks && sidebarUl) sidebarUl.appendChild(tplLinks.content.cloneNode(true));
+
+      const tplPages = document.getElementById("tplAdminPages");
+      const pagesContainer = document.querySelector(".yf-container");
+      if (tplPages && pagesContainer) pagesContainer.appendChild(tplPages.content.cloneNode(true));
+
+      const tplModals = document.getElementById("tplAdminModals");
+      if (tplModals) document.body.appendChild(tplModals.content.cloneNode(true));
+    }
+
     function setAuthState(isAuthenticated, info){
       document.querySelectorAll('[data-auth-state="guest"]').forEach(elm => {
         elm.classList.toggle("u-hidden", isAuthenticated);
@@ -9996,6 +10130,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
       // so this is defense in depth, not the only gate.
       const isAdmin = !!(isAuthenticated && info && info.role === "admin");
       const hasAnyAdminAccess = !!(isAuthenticated && info && window.YF.roles && (info.role === "admin" || window.YF.roles.SUB_ROLES.includes(info.role)));
+      if (hasAnyAdminAccess) injectAdminMarkup();
       document.querySelectorAll('[data-auth-state="admin"]').forEach(elm => {
         elm.classList.toggle("u-hidden", !hasAnyAdminAccess);
       });
@@ -10022,7 +10157,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
       // bounce them back to Home so the section never stays rendered
       // without the role backing it.
       {
-        const adminPageIds = ["page-admin-dashboard", "page-admin-products", "page-admin-categories", "page-admin-bundles", "page-admin-payments", "page-admin-payment-methods", "page-admin-social-settings", "page-admin-settings", "page-admin-communication", "page-admin-legal", "page-admin-coupons", "page-admin-announcements", "page-admin-notification-templates", "page-admin-activity-logs"];
+        const adminPageIds = ["page-admin-dashboard", "page-admin-products", "page-admin-categories", "page-admin-bundles", "page-admin-reviews-mod", "page-admin-payments", "page-admin-payment-methods", "page-admin-social-settings", "page-admin-settings", "page-admin-communication", "page-admin-legal", "page-admin-coupons", "page-admin-announcements", "page-admin-notification-templates", "page-admin-activity-logs"];
         const openAdminPageId = adminPageIds.find(id => {
           const el = document.getElementById(id);
           return el && !el.classList.contains("u-hidden");
@@ -10914,6 +11049,8 @@ Take a screenshot of the successful payment confirmation."></textarea>
     function reviewCardHTML(r){
       const initials = escapeHtml((r.userName || "A").trim().slice(0, 2).toUpperCase());
       const dateMs = (r.createdAt && r.createdAt.toMillis) ? r.createdAt.toMillis() : (r.createdAt || Date.now());
+      const currentUser = window.YF.auth && window.YF.auth.currentUser;
+      const isOwn = currentUser && r.uid === currentUser.uid;
       return `
         <div class="card review-card review-card--verified">
           <div class="review-card__head">
@@ -10927,6 +11064,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
             ${starsSVG(r.rating)}
           </div>
           ${r.comment ? `<p class="review-card__comment">${escapeHtml(r.comment)}</p>` : ""}
+          ${isOwn ? `<button type="button" class="admin-action-btn admin-action-btn--danger u-mt-2" data-delete-review="${escapeHtml(`${r.productId}_${r.uid}`)}" data-review-product="${escapeHtml(r.productId)}">Delete my review</button>` : ""}
         </div>`;
     }
 
@@ -11029,6 +11167,21 @@ Take a screenshot of the successful payment confirmation."></textarea>
         listEl.innerHTML = reviews.length
           ? reviews.map(reviewCardHTML).join("")
           : `<p class="u-text-muted">No reviews yet.</p>`;
+        listEl.querySelectorAll("[data-delete-review]").forEach(btn => {
+          btn.addEventListener("click", async () => {
+            if (!confirm("Delete your review? This can't be undone.")) return;
+            btn.disabled = true;
+            try{
+              await window.YF.reviews.remove(btn.dataset.deleteReview, btn.dataset.reviewProduct);
+              window.YF.ui.toast({ type:"success", title:"Review deleted", message:"Your review was removed." });
+              renderReviewsSection(productId);
+            }catch(err){
+              console.error("YF.reviews: delete own review failed", err);
+              window.YF.ui.toast({ type:"danger", title:"Couldn't delete review", message: err.message || "Please try again." });
+              btn.disabled = false;
+            }
+          });
+        });
       }
     }
 
@@ -17474,6 +17627,107 @@ Take a screenshot of the successful payment confirmation."></textarea>
     }
 
     /* ---------------------------------------------------------
+       SECTION 23g: REVIEWS MODERATION (added)
+       One-time reads via YF.reviews.listAllForAdmin() (not a live
+       subscription — reviews don't need second-by-second freshness
+       here the way orders/tickets do; the page simply refetches
+       after every delete). Delete calls YF.reviews.remove(), which
+       recomputes that product's aggregate rating for you.
+       --------------------------------------------------------- */
+    let reviewsModCache = [];
+    let reviewsModSearch = "";
+
+    function getFilteredReviewsMod(){
+      const q = reviewsModSearch.trim().toLowerCase();
+      if (!q) return reviewsModCache;
+      return reviewsModCache.filter(r =>
+        String(r.productId || "").toLowerCase().includes(q) ||
+        String(r.userName || "").toLowerCase().includes(q)
+      );
+    }
+
+    function reviewsModDateLabel(r){
+      const t = (r.createdAt && r.createdAt.toMillis) ? r.createdAt.toMillis() : (typeof r.createdAt === "number" ? r.createdAt : 0);
+      return t ? new Date(t).toLocaleDateString(undefined, { year:"numeric", month:"short", day:"numeric" }) : "—";
+    }
+
+    function renderAdminReviewsTable(){
+      const tbody = document.getElementById("adminReviewsTableBody");
+      if (!tbody) return;
+      const list = getFilteredReviewsMod();
+      if (!list.length){
+        tbody.innerHTML = `<tr><td colspan="6"><div class="admin-empty-state">No reviews match this view.</div></td></tr>`;
+        return;
+      }
+      tbody.innerHTML = list.map(r => {
+        const product = productsCache.find(p => p.id === r.productId);
+        return `
+        <tr>
+          <td class="u-text-muted">${escapeHtml(product ? product.title : r.productId)}</td>
+          <td>${escapeHtml(r.userName || "Anonymous")}</td>
+          <td>${"★".repeat(Math.round(r.rating || 0))}${"☆".repeat(5 - Math.round(r.rating || 0))}</td>
+          <td class="u-text-muted" style="max-width:320px;">${escapeHtml((r.comment || "—").slice(0, 200))}</td>
+          <td class="u-text-muted">${reviewsModDateLabel(r)}</td>
+          <td>
+            <div class="admin-row-actions">
+              <button type="button" class="admin-action-btn admin-action-btn--danger" data-delete-review-mod="${escapeHtml(r.id)}" data-review-mod-product="${escapeHtml(r.productId)}">Delete</button>
+            </div>
+          </td>
+        </tr>`;
+      }).join("");
+    }
+
+    async function loadAdminReviews(){
+      reviewsModCache = (window.YF.reviews && window.YF.reviews.listAllForAdmin) ? await window.YF.reviews.listAllForAdmin() : [];
+      renderAdminReviewsTable();
+    }
+
+    async function deleteReviewMod(reviewId, productId){
+      if (!isAdmin()) return;
+      const btn = document.querySelector(`[data-delete-review-mod="${reviewId}"]`);
+      if (btn){ btn.disabled = true; btn.textContent = "Deleting…"; }
+      try{
+        await window.YF.reviews.remove(reviewId, productId);
+        window.YF.ui.toast({ type:"success", title:"Review deleted", message:"The review was removed and the product rating recalculated." });
+        logActivity("review-delete", `Deleted review ${reviewId}`);
+        await loadAdminReviews();
+      }catch(err){
+        console.error("YF.admin: deleteReviewMod failed", err);
+        window.YF.ui.toast({ type:"danger", title:"Couldn't delete review", message: err.message || "Please try again." });
+        if (btn){ btn.disabled = false; btn.textContent = "Delete"; }
+      }
+    }
+
+    function bindReviewsModPage(){
+      const tbody = document.getElementById("adminReviewsTableBody");
+      if (tbody && tbody.dataset.bound !== "true"){
+        tbody.addEventListener("click", (e) => {
+          const btn = e.target.closest("[data-delete-review-mod]");
+          if (!btn) return;
+          if (!confirm("Delete this review permanently?")) return;
+          deleteReviewMod(btn.dataset.deleteReviewMod, btn.dataset.reviewModProduct);
+        });
+        tbody.dataset.bound = "true";
+      }
+      const searchInput = document.getElementById("adminReviewsSearch");
+      if (searchInput && searchInput.dataset.bound !== "true"){
+        searchInput.addEventListener("input", (e) => { reviewsModSearch = e.target.value; renderAdminReviewsTable(); });
+        searchInput.dataset.bound = "true";
+      }
+    }
+
+    /** Entry point wired from handleRouteClick for data-route="admin-reviews-mod". */
+    function renderReviewsModPage(){
+      if (!isAdmin()){
+        window.YF.ui.navigateTo("home");
+        return;
+      }
+      bindReviewsModPage();
+      if (!productsUnsub) subscribeProducts();
+      loadAdminReviews();
+    }
+
+    /* ---------------------------------------------------------
        TRADING BROKERS MANAGEMENT (Affiliate Broker System)
        Full CRUD against a top-level "trading_brokers" Firestore
        collection — see YF.brokers for the public read-only side and
@@ -22004,7 +22258,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
       renderEarningsPage, renderWithdrawalsPage, renderAffiliatesPage, renderAnalyticsPage,
       renderAdminTicketsPage, renderAdminChatPage, renderAdminBlogPage, renderAdminContactMessagesPage,
       renderReportsPage, renderBackupPage,
-      renderAdminBundlesPage
+      renderAdminBundlesPage, renderReviewsModPage
     };
   })();
 
