@@ -7944,8 +7944,24 @@ Take a screenshot of the successful payment confirmation."></textarea>
       if (!user) return false;
       try{
         const snap = await getDoc(doc(db, "users", user.uid, "purchases", productId));
-        return snap.exists();
-      }catch(err){ console.error("YF.reviews: purchase check failed", err); return false; }
+        if (snap.exists()) return true;
+      }catch(err){ console.error("YF.reviews: purchase check failed", err); }
+      // FIX (SECTION 23g — added): a Firestore rules bug used to block
+      // the purchases-marker write on every order approval, so any
+      // order approved before that fix has no marker doc at all. This
+      // fallback checks directly for an approved order on this
+      // product, so those existing buyers aren't locked out of
+      // reviewing without needing a data migration.
+      try{
+        const q = query(
+          collection(db, "orders"),
+          where("uid", "==", user.uid),
+          where("productId", "==", productId),
+          where("status", "==", "approved")
+        );
+        const snap2 = await getDocs(q);
+        return !snap2.empty;
+      }catch(err){ console.error("YF.reviews: fallback purchase check failed", err); return false; }
     },
 
     /** The current user's own review for this product, if any. */
@@ -8670,13 +8686,23 @@ Take a screenshot of the successful payment confirmation."></textarea>
         status: "active",
         createdAt: serverTimestamp()
       });
-      await setDoc(doc(db, "users", order.uid, "purchases", order.productId), {
-        productId: order.productId,
-        orderId: order.id,
-        licenseId: licenseRef.id,
-        licenseKey,
-        purchasedAt: serverTimestamp()
-      }, { merge: true });
+      // Purchase marker (used by YF.reviews.hasPurchased() to gate
+      // reviews to verified buyers). Wrapped defensively — if this
+      // write ever fails for any reason, the license itself (already
+      // issued above) still stands, and approveOrderAndIssueLicense()
+      // still goes on to credit affiliate/referral rewards and notify
+      // the buyer instead of the whole approval silently stalling here.
+      try{
+        await setDoc(doc(db, "users", order.uid, "purchases", order.productId), {
+          productId: order.productId,
+          orderId: order.id,
+          licenseId: licenseRef.id,
+          licenseKey,
+          purchasedAt: serverTimestamp()
+        }, { merge: true });
+      }catch(err){
+        console.error("YF.licenses: purchase-marker write failed (license still issued; reviews may be blocked for this order until this is fixed)", err);
+      }
       if (window.YF.notifications && order.uid){
         const tpl = (window.YF.notifyTemplates ? window.YF.notifyTemplates.render("licenseIssued", { productTitle: order.productTitle || "your product", licenseKey }) : null)
           || { title: "License ready", message: `Your license key ${licenseKey} for "${order.productTitle || "your product"}" is ready to use.` };
