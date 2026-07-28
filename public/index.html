@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -1069,24 +1069,27 @@ body.sidebar-collapsed .yf-sidebar .yf-sidebar__section-title{ opacity: 0; point
   font-size: var(--fs-xs); font-weight:700;
   padding: 4px 10px; border-radius: var(--r-full);
 }
+.product-card__actions-row{
+  display:flex; align-items:center; justify-content:space-between; gap: var(--sp-2);
+  margin-bottom: var(--sp-2);
+}
+.product-card__icon-actions{ display:flex; align-items:center; gap: var(--sp-2); }
 .product-card__wishlist{
-  position:absolute; top: var(--sp-3); right: var(--sp-3);
-  width:36px; height:36px; border-radius: var(--r-full);
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(6px);
+  position:static;
+  width:32px; height:32px; border-radius: var(--r-full);
+  background: var(--glass-bg-strong);
   border: 1px solid var(--glass-border);
-  color:#fff; display:grid; place-items:center; cursor:pointer;
+  color: var(--c-text-muted); display:grid; place-items:center; cursor:pointer;
   transition: color var(--dur-fast), border-color var(--dur-fast);
 }
 .product-card__wishlist svg{ width:16px; height:16px; }
 .product-card__wishlist.is-active{ color: var(--c-gold-300); border-color: var(--glass-border-hi); }
 .product-card__favorite{
-  position:absolute; top: var(--sp-3); right: calc(var(--sp-3) + 44px);
-  width:36px; height:36px; border-radius: var(--r-full);
-  background: rgba(0,0,0,0.55);
-  backdrop-filter: blur(6px);
+  position:static;
+  width:32px; height:32px; border-radius: var(--r-full);
+  background: var(--glass-bg-strong);
   border: 1px solid var(--glass-border);
-  color:#fff; display:grid; place-items:center; cursor:pointer;
+  color: var(--c-text-muted); display:grid; place-items:center; cursor:pointer;
   transition: color var(--dur-fast), border-color var(--dur-fast);
 }
 .product-card__favorite svg{ width:16px; height:16px; }
@@ -1174,11 +1177,10 @@ body.sidebar-collapsed .yf-sidebar .yf-sidebar__section-title{ opacity: 0; point
 .mp-search-result__meta{ font-size: var(--fs-xs); color: var(--c-text-muted); }
 
 .product-card__compare{
-  position:absolute; top: var(--sp-3); left: var(--sp-3); z-index:2;
   display:flex; align-items:center; gap: var(--sp-2);
-  background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
+  background: var(--glass-bg-strong);
   border:1px solid var(--glass-border); border-radius: var(--r-full);
-  padding: 4px var(--sp-3) 4px 4px; font-size: var(--fs-xs); color: var(--c-text-body); cursor:pointer;
+  padding: 4px var(--sp-3) 4px 4px; font-size: var(--fs-xs); color: var(--c-text-muted); cursor:pointer;
 }
 .product-card__compare input{ accent-color: var(--c-gold-500); width:15px; height:15px; cursor:pointer; }
 
@@ -11620,15 +11622,19 @@ Take a screenshot of the successful payment confirmation."></textarea>
             ${eff.percentOff > 0 ? `<span class="product-card__discount">${eff.isFlashSale ? "⚡ " : ""}-${eff.percentOff}%</span>` : ""}
             ${eff.isFlashSale && eff.endsAt ? `<span class="yf-countdown" data-countdown="${eff.endsAt}"></span>` : ""}
             ${isNewProduct(p) ? `<span class="product-card__badge-new">NEW</span>` : ""}
+          </div>
+          <div class="product-card__actions-row">
             <label class="product-card__compare" data-compare-toggle="${p.id}" title="Add to compare">
               <input type="checkbox" ${isComparing ? "checked" : ""} tabindex="-1"> Compare
             </label>
-            <button class="product-card__wishlist ${isWished ? "is-active" : ""}" data-wishlist-toggle="${p.id}" aria-label="Toggle wishlist">
-              <svg viewBox="0 0 24 24" fill="${isWished ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
-            </button>
-            <button class="product-card__favorite ${isFaved ? "is-active" : ""}" data-favorite-toggle="${p.id}" aria-label="Toggle favorite">
-              <svg viewBox="0 0 24 24" fill="${isFaved ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 9 22 9 16.5 13.5 18.5 21 12 16.5 5.5 21 7.5 13.5 2 9 9 9"/></svg>
-            </button>
+            <div class="product-card__icon-actions">
+              <button class="product-card__wishlist ${isWished ? "is-active" : ""}" data-wishlist-toggle="${p.id}" aria-label="Toggle wishlist">
+                <svg viewBox="0 0 24 24" fill="${isWished ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+              </button>
+              <button class="product-card__favorite ${isFaved ? "is-active" : ""}" data-favorite-toggle="${p.id}" aria-label="Toggle favorite">
+                <svg viewBox="0 0 24 24" fill="${isFaved ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 9 22 9 16.5 13.5 18.5 21 12 16.5 5.5 21 7.5 13.5 2 9 9 9"/></svg>
+              </button>
+            </div>
           </div>
           <div class="product-card__category">${escapeHtml(categoryLabel(p.category))}</div>
           <h3 class="product-card__title">${escapeHtml(p.title)}</h3>
@@ -22572,7 +22578,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
      visit starts on the dark theme; the toggle works for the current
      session. */
   YF.theme = (function(){
-    let current = "dark";
+    let current = "light"; // default theme (was "dark")
     function get(){ return current; }
     function apply(mode){
       document.documentElement.setAttribute("data-theme", mode);
