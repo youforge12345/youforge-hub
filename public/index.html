@@ -2556,6 +2556,10 @@ html[data-theme="light"] .product-card:hover{
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span class="yf-sidebar__label">Profile</span>
       </a></li>
+      <li><a class="yf-sidebar__link" href="#" data-route="devices" data-protected="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="12" rx="1"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="16" x2="12" y2="21"/></svg>
+        <span class="yf-sidebar__label">My Devices</span>
+      </a></li>
       <li><a class="yf-sidebar__link" href="#" data-route="purchases" data-protected="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2l1.5 4h9L18 2"/><path d="M3.5 6h17l-1.6 13a2 2 0 0 1-2 1.8H7.1a2 2 0 0 1-2-1.8z"/></svg>
         <span class="yf-sidebar__label">My Purchases</span>
@@ -3493,6 +3497,23 @@ html[data-theme="light"] .product-card:hover{
           <p class="u-text-muted" style="font-size:var(--fs-sm);">This permanently deletes your account and profile data. This action cannot be undone.</p>
           <button class="btn btn--danger u-mt-4" type="button" id="profileDeleteBtn">Delete My Account</button>
         </div>
+      </div>
+
+      <!-- ==========================================================
+           SECTION 23h: MY DEVICES PAGE (added)
+           Populated by YF.marketplace.renderDevicesPage(), backed by
+           YF.sessions (users/{uid}/sessions/{deviceId}). "This
+           device" is tagged by matching YF.sessions.getDeviceId();
+           "Sign out" on any OTHER row flags that device's session doc
+           — that device (if online) signs itself out the moment it
+           sees the flag via its own onSnapshot watch.
+           ========================================================== -->
+      <div class="yf-page u-hidden" id="page-devices">
+        <section class="u-mb-4">
+          <h1>My Devices</h1>
+          <p class="u-text-muted">Everywhere you're currently signed in</p>
+        </section>
+        <div id="devicesList"><p class="u-text-muted">Loading…</p></div>
       </div>
 
       <!-- ==========================================================
@@ -7365,6 +7386,9 @@ Take a screenshot of the successful payment confirmation."></textarea>
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
   import {
     getFirestore,
+    initializeFirestore,
+    persistentLocalCache,
+    persistentMultipleTabManager,
     doc,
     setDoc,
     getDoc,
@@ -7407,7 +7431,23 @@ Take a screenshot of the successful payment confirmation."></textarea>
   // (auth module, marketplace module, dashboard module, etc.)
   const app     = initializeApp(firebaseConfig);
   const auth    = getAuth(app);
-  const db      = getFirestore(app);
+  // OFFLINE SYNC (added): persistentLocalCache keeps every read this
+  // session has already seen in IndexedDB, so the app can still show
+  // (already-fetched) product/order/etc. data — and queue up writes —
+  // while offline or on a flaky connection, syncing automatically once
+  // back online. persistentMultipleTabManager lets this work correctly
+  // even if the user has the site open in more than one browser tab at
+  // once (falls back gracefully to memory-only cache if the browser
+  // doesn't support it, e.g. some private/incognito modes).
+  let db;
+  try{
+    db = initializeFirestore(app, {
+      localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+    });
+  }catch(err){
+    console.error("Firestore offline persistence unavailable, falling back to default (online-only) cache:", err);
+    db = getFirestore(app);
+  }
   const storage = getStorage(app);
 
   window.YF = window.YF || {};
@@ -7680,6 +7720,135 @@ Take a screenshot of the successful payment confirmation."></textarea>
     return { ADMIN_ROUTE_ROLES, SUB_ROLES, hasAnyAdminAccess, canAccessAdminRoute, isSubRole, roleLabel };
   })();
 
+  /* ============================================================
+     MODULE: YF.sessions — Device / Session Management (added)
+     Tracks a lightweight "which devices are signed into my account"
+     list per user, under users/{uid}/sessions/{deviceId}. deviceId
+     is a random id generated once and kept in localStorage (same
+     pattern this app already uses for affiliate/referral codes), so
+     it's stable across reloads and tabs on the SAME browser, but
+     distinct per browser/device — exactly what "sign out this
+     device remotely" needs to target.
+
+     Remote sign-out is best-effort or the client SDK has no admin-
+     level API to invalidate another device's Firebase Auth session:
+     revoking a device just flags its session doc; that device (if
+     online) is watching its OWN doc via onSnapshot and signs itself
+     out the moment it sees the flag. If that device is offline, it
+     signs itself out the next time it opens the app and this listener
+     starts (since the flag is still set on its doc).
+
+     Firestore rule needed (owner-only, like wishlist/cart above):
+       match /users/{uid}/sessions/{sessionId} {
+         allow read, write: if request.auth != null && request.auth.uid == uid;
+       }
+     ============================================================ */
+  YF.sessions = (function(){
+    let revocationUnsub = null;
+
+    function getDeviceId(){
+      try{
+        let id = localStorage.getItem("yf_device_id");
+        if (!id){
+          id = "dev_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 10);
+          localStorage.setItem("yf_device_id", id);
+        }
+        return id;
+      }catch(err){ return "dev_unknown"; }
+    }
+
+    /** A short, human-readable label for this browser/OS — no
+     *  external UA-parsing library, just enough to tell devices apart
+     *  in a list ("Chrome on Windows", "Safari on iPhone", etc). */
+    function deviceLabel(){
+      const ua = navigator.userAgent || "";
+      let browser = "Browser";
+      if (/Edg\//.test(ua)) browser = "Edge";
+      else if (/OPR\//.test(ua)) browser = "Opera";
+      else if (/Chrome\//.test(ua) && !/Chromium/.test(ua)) browser = "Chrome";
+      else if (/Firefox\//.test(ua)) browser = "Firefox";
+      else if (/Safari\//.test(ua) && !/Chrome/.test(ua)) browser = "Safari";
+      let os = "device";
+      if (/Windows/.test(ua)) os = "Windows";
+      else if (/iPhone|iPad/.test(ua)) os = "iOS";
+      else if (/Android/.test(ua)) os = "Android";
+      else if (/Mac OS X/.test(ua)) os = "Mac";
+      else if (/Linux/.test(ua)) os = "Linux";
+      return `${browser} on ${os}`;
+    }
+
+    /** Called right after a real (non-anonymous) sign-in. Upserts this
+     *  device's session doc with a fresh lastActiveAt, and starts
+     *  watching it for a remote "revoked" flag. */
+    async function registerSession(){
+      const fb = window.YF.firebase;
+      const user = window.YF.auth && window.YF.auth.currentUser;
+      if (!user || !(fb && fb.db)) return;
+      const deviceId = getDeviceId();
+      try{
+        await fb.setDoc(fb.doc(fb.db, "users", user.uid, "sessions", deviceId), {
+          deviceLabel: deviceLabel(),
+          lastActiveAt: fb.serverTimestamp(),
+          createdAt: fb.serverTimestamp(),
+          revoked: false
+        }, { merge: true });
+      }catch(err){ console.error("YF.sessions: registerSession failed", err); }
+      watchRevocation(user.uid, deviceId);
+    }
+
+    function watchRevocation(uid, deviceId){
+      const fb = window.YF.firebase;
+      if (revocationUnsub){ try{ revocationUnsub(); }catch(e){} revocationUnsub = null; }
+      if (!(fb && fb.db)) return;
+      try{
+        revocationUnsub = fb.onSnapshot(fb.doc(fb.db, "users", uid, "sessions", deviceId), (snap) => {
+          if (snap.exists() && snap.data().revoked === true && window.YF.auth && window.YF.auth.currentUser){
+            if (window.YF.ui && window.YF.ui.toast){
+              window.YF.ui.toast({ type:"info", title:"Signed out", message:"This device was signed out remotely from another session." });
+            }
+            if (window.YF.auth && window.YF.auth.logout) window.YF.auth.logout();
+          }
+        }, (err) => { console.error("YF.sessions: watchRevocation failed", err); });
+      }catch(err){ console.error("YF.sessions: watchRevocation threw", err); }
+    }
+
+    function stopWatching(){
+      if (revocationUnsub){ try{ revocationUnsub(); }catch(e){} revocationUnsub = null; }
+    }
+
+    /** Live list of every device signed into the CURRENT user's own
+     *  account, most-recently-active first. */
+    function subscribeMine(callback){
+      const fb = window.YF.firebase;
+      const user = window.YF.auth && window.YF.auth.currentUser;
+      if (!user || !(fb && fb.db)){ callback([]); return () => {}; }
+      try{
+        return fb.onSnapshot(fb.collection(fb.db, "users", user.uid, "sessions"), (snap) => {
+          const list = snap.docs
+            .map(d => ({ id: d.id, ...d.data() }))
+            .filter(s => !s.revoked)
+            .sort((a, b) => {
+              const at = (a.lastActiveAt && a.lastActiveAt.toMillis) ? a.lastActiveAt.toMillis() : 0;
+              const bt = (b.lastActiveAt && b.lastActiveAt.toMillis) ? b.lastActiveAt.toMillis() : 0;
+              return bt - at;
+            });
+          callback(list);
+        }, (err) => { console.error("YF.sessions: subscribeMine failed", err); callback([]); });
+      }catch(err){ console.error("YF.sessions: subscribeMine threw", err); callback([]); return () => {}; }
+    }
+
+    /** Sign a specific OTHER device out remotely (never the caller's
+     *  own current device — use normal Log Out for that). */
+    async function revoke(deviceId){
+      const fb = window.YF.firebase;
+      const user = window.YF.auth && window.YF.auth.currentUser;
+      if (!user || !(fb && fb.db)) return;
+      await fb.updateDoc(fb.doc(fb.db, "users", user.uid, "sessions", deviceId), { revoked: true });
+    }
+
+    return { getDeviceId, registerSession, watchRevocation, stopWatching, subscribeMine, revoke };
+  })();
+
   window.YF.auth = {
     currentUser: null,
     currentRole: "user",
@@ -7806,10 +7975,12 @@ Take a screenshot of the successful payment confirmation."></textarea>
         role: role,
         verified: user.emailVerified
       });
+      if (window.YF.sessions) window.YF.sessions.registerSession();
     } else {
       window.YF.auth.currentUser = null;
       window.YF.auth.currentRole = "user";
       window.YF.ui && window.YF.ui.setAuthState(false);
+      if (window.YF.sessions) window.YF.sessions.stopWatching();
       // No session at all (not even anonymous) — sign in anonymously in
       // the background so every visitor, logged in or not, always has a
       // real Firebase uid available (window.YF.firebase.auth.currentUser)
@@ -9951,6 +10122,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
       if (route === "payment-history" && window.YF.marketplace) window.YF.marketplace.renderPaymentHistoryPage();
       if (route === "dashboard" && window.YF.marketplace) window.YF.marketplace.renderDashboardPage();
       if (route === "profile" && window.YF.profile) window.YF.profile.render();
+      if (route === "devices" && window.YF.marketplace) window.YF.marketplace.renderDevicesPage();
       if (route === "notifications" && window.YF.marketplace) window.YF.marketplace.renderNotificationsPage();
       if (route === "tickets" && window.YF.marketplace) window.YF.marketplace.renderTicketsPage();
       if (route === "settings" && window.YF.marketplace) window.YF.marketplace.renderSettingsPage();
@@ -13117,6 +13289,59 @@ Take a screenshot of the successful payment confirmation."></textarea>
       }
     }
 
+    /* ==========================================================
+       SECTION 23h: MY DEVICES PAGE (added) — backed by YF.sessions.
+       ========================================================== */
+    let devicesUnsub = null;
+
+    function deviceRowHTML(s){
+      const isThisDevice = window.YF.sessions && s.id === window.YF.sessions.getDeviceId();
+      const ms = (s.lastActiveAt && s.lastActiveAt.toMillis) ? s.lastActiveAt.toMillis() : Date.now();
+      return `
+        <div class="order-card">
+          <div class="order-card__main">
+            <div class="order-card__title">${escapeHtml(s.deviceLabel || "Unknown device")}${isThisDevice ? ` <span class="status-badge status-badge--approved">This device</span>` : ""}</div>
+            <div class="order-card__meta">
+              <span>Last active <strong>${formatDate(ms)}</strong></span>
+            </div>
+          </div>
+          <div class="order-card__side">
+            ${isThisDevice ? "" : `<button type="button" class="btn btn--outline btn--sm" data-revoke-device="${escapeHtml(s.id)}">Sign out</button>`}
+          </div>
+        </div>`;
+    }
+
+    /** Entry point wired from handleRouteClick for data-route="devices". */
+    function renderDevicesPage(){
+      const listEl = document.getElementById("devicesList");
+      if (!listEl) return;
+      if (!(window.YF.auth && window.YF.auth.currentUser)){
+        listEl.innerHTML = `<p class="u-text-muted">Log in to see your devices.</p>`;
+        return;
+      }
+      if (!window.YF.sessions){ listEl.innerHTML = `<p class="u-text-muted">Device tracking isn't available right now.</p>`; return; }
+      if (devicesUnsub){ try{ devicesUnsub(); }catch(e){} devicesUnsub = null; }
+      devicesUnsub = window.YF.sessions.subscribeMine((list) => {
+        listEl.innerHTML = list.length
+          ? list.map(deviceRowHTML).join("")
+          : `<p class="u-text-muted">No devices found.</p>`;
+        listEl.querySelectorAll("[data-revoke-device]").forEach(btn => {
+          btn.addEventListener("click", async () => {
+            if (!confirm("Sign this device out? It will be logged out the next time it's online.")) return;
+            btn.disabled = true; btn.textContent = "Signing out…";
+            try{
+              await window.YF.sessions.revoke(btn.dataset.revokeDevice);
+              window.YF.ui.toast({ type:"success", title:"Device signed out", message:"That device will be logged out." });
+            }catch(err){
+              console.error("YF.marketplace: revoke device failed", err);
+              window.YF.ui.toast({ type:"danger", title:"Couldn't sign out device", message: err.message || "Please try again." });
+              btn.disabled = false; btn.textContent = "Sign out";
+            }
+          });
+        });
+      });
+    }
+
     /** Renders the Notifications page and (re)starts the live
      *  subscription — safe to call every time the page is opened,
      *  since subscribeToMine() always replaces any prior listener. */
@@ -13976,7 +14201,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
       renderDownloadsPage, renderLicensesPage, renderPaymentHistoryPage,
       renderNotificationsPage, renderTicketsPage, renderSettingsPage,
       renderCartPage, openCartCheckout, renderWalletPage, renderAffiliatePage, renderChatPage,
-      renderContactPage, renderBlogPage, renderReferralPage, renderBundlesPage, openBundleCheckout
+      renderContactPage, renderBlogPage, renderReferralPage, renderBundlesPage, openBundleCheckout, renderDevicesPage
     };
   })();
 
