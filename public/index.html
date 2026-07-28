@@ -3033,6 +3033,23 @@ html[data-theme="light"] .product-card:hover{
           </div>
         </section>
 
+        <!-- ---------- SECTION 23i: PRODUCT Q&A (added) ---------- -->
+        <section class="reviews-section" style="margin-top: var(--sp-9);">
+          <div class="section-head">
+            <h2>Questions &amp; Answers</h2>
+            <p class="u-text-muted">Ask anything about this product before you buy</p>
+          </div>
+
+          <div class="review-form card" id="qaFormWrap">
+            <!-- YF.marketplace injects the "ask a question" form (or a
+                 login prompt) here -->
+          </div>
+
+          <div class="reviews-list" id="qaList">
+            <!-- YF.marketplace injects question/answer cards here -->
+          </div>
+        </section>
+
       </div>
 
       <!-- ==========================================================
@@ -3534,6 +3551,7 @@ html[data-theme="light"] .product-card:hover{
           </div>
           <button class="btn btn--outline btn--sm" type="button" id="markAllNotifsReadBtn">Mark all as read</button>
         </section>
+        <button class="btn btn--outline btn--sm u-mb-4" type="button" id="enablePushBtn">🔔 Enable Push Notifications on This Device</button>
         <div class="notif-page-list" id="notificationsPageList">
           <div class="skeleton skeleton--text w-60"></div>
           <div class="skeleton skeleton--text w-40"></div>
@@ -5863,6 +5881,10 @@ html[data-theme="light"] .product-card:hover{
           </div>
           <label class="toggle-switch"><input type="checkbox" id="productFormFeatured"><span class="toggle-switch__track"></span></label>
         </div>
+        <div class="form-group u-mt-4">
+          <label class="form-label" for="productFormStockLimit">Stock Limit <span class="u-text-muted" style="text-transform:none;">(optional — leave blank for unlimited licenses)</span></label>
+          <input class="form-input" type="number" id="productFormStockLimit" min="0" step="1" placeholder="e.g. 50" style="max-width:200px;">
+        </div>
       </div>
       <div class="modal__footer">
         <button class="btn btn--ghost" data-action="close-modal" type="button">Cancel</button>
@@ -6762,6 +6784,16 @@ Take a screenshot of the successful payment confirmation."></textarea>
   <button type="button" class="abandoned-cart-banner__dismiss" data-abandoned-cart-dismiss="true" aria-label="Dismiss">&times;</button>
 </div>
 
+<!-- ==========================================================
+     SECTION 23i: COOKIE CONSENT BANNER (added). Shown once per
+     browser until dismissed (localStorage, same pattern as
+     affiliate/referral codes elsewhere in this app).
+     ========================================================== -->
+<div class="abandoned-cart-banner u-hidden" id="cookieConsentBanner" style="bottom: var(--sp-6); top:auto;">
+  <span>We use cookies for login sessions and basic analytics. <a href="#" data-route="privacy" data-nav style="color:var(--c-gold-300);">Privacy Policy</a></span>
+  <button type="button" class="btn btn--primary btn--sm" id="cookieConsentAcceptBtn">Accept</button>
+</div>
+
 <div class="compare-bar" id="compareBar">
   <div class="compare-bar__thumbs" id="compareBarThumbs"></div>
   <span class="compare-bar__count" id="compareBarCount">0 selected</span>
@@ -7230,6 +7262,13 @@ Take a screenshot of the successful payment confirmation."></textarea>
           <input class="form-input" type="password" id="signupConfirmPassword" placeholder="Re-enter your password" autocomplete="new-password" required>
           <div class="form-error" id="signupConfirmPasswordError">Passwords do not match.</div>
         </div>
+        <div class="form-group">
+          <label class="filter-check" style="align-items:flex-start;">
+            <input type="checkbox" id="signupAgreeTerms">
+            <span>I agree to the <a href="#" data-route="terms" data-nav style="color:var(--c-gold-300);">Terms &amp; Conditions</a> and <a href="#" data-route="privacy" data-nav style="color:var(--c-gold-300);">Privacy Policy</a></span>
+          </label>
+          <div class="form-error" id="signupAgreeTermsError">You must agree to the Terms &amp; Conditions to continue.</div>
+        </div>
         <button class="btn btn--primary btn--block btn--lg u-mt-4" type="submit" id="signupSubmitBtn">Create Account</button>
         <p class="form-hint u-text-center">By signing up, a verification email will be sent to confirm your address.</p>
       </form>
@@ -7362,6 +7401,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
   // security rules + App Check are configured.
   // -----------------------------------------------------------
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import { getAnalytics, isSupported as analyticsIsSupported } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-analytics.js";
   import {
     getAuth,
     onAuthStateChanged,
@@ -7415,6 +7455,12 @@ Take a screenshot of the successful payment confirmation."></textarea>
     getDownloadURL,
     deleteObject
   } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-storage.js";
+  import {
+    getMessaging,
+    getToken as getFcmToken,
+    onMessage as onFcmMessage,
+    isSupported as messagingIsSupported
+  } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-messaging.js";
 
   const firebaseConfig = {
     apiKey:            "AIzaSyB8Pihb7WEKoHedbLHO4emiuqE1miO_smk",
@@ -7449,6 +7495,13 @@ Take a screenshot of the successful payment confirmation."></textarea>
     db = getFirestore(app);
   }
   const storage = getStorage(app);
+  // Google Analytics (added) — measurementId was already in
+  // firebaseConfig above but was never actually connected. isSupported()
+  // guards against environments where it silently can't run (some
+  // in-app browsers, privacy-focused browsers blocking gtag, etc).
+  analyticsIsSupported().then((ok) => {
+    if (ok){ try{ getAnalytics(app); }catch(err){ console.error("Google Analytics init failed:", err); } }
+  }).catch(() => {});
 
   window.YF = window.YF || {};
   window.YF.firebase = {
@@ -7849,6 +7902,75 @@ Take a screenshot of the successful payment confirmation."></textarea>
     return { getDeviceId, registerSession, watchRevocation, stopWatching, subscribeMine, revoke };
   })();
 
+  /* ============================================================
+     MODULE: YF.push — Web Push Notifications (added)
+     Client-side setup only: requests browser permission, gets an FCM
+     token, and saves it to users/{uid}.fcmTokens (an array, so a user
+     can have push enabled on more than one device/browser). This is
+     what lets an admin broadcast a push from Firebase Console's
+     "Cloud Messaging → New notification → Compose" UI to every
+     subscribed browser, with ZERO extra backend code.
+
+     What this does NOT do: automatically fire a push the moment a
+     new order/ticket-reply/etc. happens. That needs a Cloud Function
+     (Blaze plan + `firebase deploy --only functions`) listening for
+     the same Firestore writes YF.notifications.create() already
+     makes, which forwards them to the FCM Admin SDK — a bigger,
+     separate piece of infrastructure than a static-hosted file can
+     provide, and intentionally out of scope here.
+
+     REQUIRES: a VAPID key pair from Firebase Console → Project
+     Settings → Cloud Messaging → "Web Push certificates" → Generate
+     key pair. Paste the "Key pair" value into VAPID_KEY below —
+     until that's done, push stays a harmless no-op (isSupported()/
+     getToken() just won't resolve a token, everything else on the
+     site keeps working exactly as before).
+     ============================================================ */
+  const VAPID_KEY = "PASTE_YOUR_VAPID_KEY_HERE";
+
+  YF.push = (function(){
+    let messaging = null;
+
+    async function isReady(){
+      try{
+        if (VAPID_KEY === "PASTE_YOUR_VAPID_KEY_HERE") return false;
+        return await messagingIsSupported();
+      }catch(err){ return false; }
+    }
+
+    /** Call from a button click (permission prompts must be
+     *  user-gesture-triggered in every modern browser). Returns true
+     *  if push is now enabled on this device. */
+    async function enable(){
+      const user = window.YF.auth && window.YF.auth.currentUser;
+      if (!user) throw new Error("You must be logged in to enable push notifications.");
+      if (!(await isReady())) throw new Error("Push notifications aren't configured yet — ask the site owner to add a VAPID key.");
+      const permission = await Notification.requestPermission();
+      if (permission !== "granted") throw new Error("Notification permission was not granted.");
+      if (!messaging) messaging = getMessaging(app);
+      const registration = await navigator.serviceWorker.ready;
+      const token = await getFcmToken(messaging, { vapidKey: VAPID_KEY, serviceWorkerRegistration: registration });
+      if (!token) throw new Error("Couldn't get a push token — please try again.");
+      await setDoc(doc(db, "users", user.uid), { fcmTokens: arrayUnion(token) }, { merge: true });
+      // Foreground messages (tab open + focused) — show as an in-app
+      // toast rather than a native OS notification, since the OS
+      // notification would be redundant while the user is looking at
+      // the tab already.
+      onFcmMessage(messaging, (payload) => {
+        if (window.YF.ui && window.YF.ui.toast){
+          window.YF.ui.toast({
+            type: "info",
+            title: (payload.notification && payload.notification.title) || "Notification",
+            message: (payload.notification && payload.notification.body) || ""
+          });
+        }
+      });
+      return true;
+    }
+
+    return { isReady, enable };
+  })();
+
   window.YF.auth = {
     currentUser: null,
     currentRole: "user",
@@ -8218,6 +8340,80 @@ Take a screenshot of the successful payment confirmation."></textarea>
             return bt - at;
           });
       }catch(err){ console.error("YF.reviews: listAllForAdmin failed", err); return []; }
+    }
+  };
+
+  // -----------------------------------------------------------
+  // SECTION 23i: YF.qa — Product Q&A (added)
+  // Separate from Reviews: any signed-in visitor may ASK a question
+  // (no purchase required — this is pre-sale, "should I buy this"
+  // territory), but only an admin/product_manager may ANSWER one,
+  // since the answer is effectively official seller communication.
+  // Matching Firestore security rule:
+  //   match /productQuestions/{id} {
+  //     allow read: if true;
+  //     allow create: if request.auth != null
+  //       && request.resource.data.uid == request.auth.uid
+  //       && request.resource.data.answer == null;
+  //     allow update: if request.auth != null && isAdmin();
+  //     allow delete: if request.auth != null
+  //       && (resource.data.uid == request.auth.uid || isAdmin());
+  //   }
+  // -----------------------------------------------------------
+  window.YF.qa = {
+    async ask(productId, question){
+      const user = window.YF.auth && window.YF.auth.currentUser;
+      if (!user) throw new Error("You must be logged in to ask a question.");
+      const cleanQuestion = String(question || "").trim().slice(0, 500);
+      if (!cleanQuestion) throw new Error("Please type a question.");
+      await addDoc(collection(db, "productQuestions"), {
+        productId,
+        uid: user.uid,
+        userName: user.displayName || (user.email ? user.email.split("@")[0] : "Anonymous"),
+        question: cleanQuestion,
+        answer: null,
+        answeredBy: null,
+        createdAt: serverTimestamp(),
+        answeredAt: null
+      });
+    },
+
+    async listForProduct(productId){
+      try{
+        const snap = await getDocs(query(collection(db, "productQuestions"), where("productId", "==", productId)));
+        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      }catch(err){ console.error("YF.qa: list failed", err); return []; }
+    },
+
+    /** ADMIN — answer a question (or edit an existing answer). */
+    async answer(questionId, answerText){
+      const user = window.YF.auth && window.YF.auth.currentUser;
+      await updateDoc(doc(db, "productQuestions", questionId), {
+        answer: String(answerText || "").trim().slice(0, 1000),
+        answeredBy: (user && (user.displayName || user.email)) || "Seller",
+        answeredAt: serverTimestamp()
+      });
+    },
+
+    /** Delete a question — its own asker, or an admin moderating. */
+    async remove(questionId){
+      await deleteDoc(doc(db, "productQuestions", questionId));
+    },
+
+    /** ADMIN — every question across every product, unanswered first. */
+    async listAllForAdmin(){
+      try{
+        const snap = await getDocs(collection(db, "productQuestions"));
+        return snap.docs
+          .map(d => ({ id: d.id, ...d.data() }))
+          .sort((a, b) => {
+            if (!a.answer && b.answer) return -1;
+            if (a.answer && !b.answer) return 1;
+            const at = (a.createdAt && a.createdAt.toMillis) ? a.createdAt.toMillis() : 0;
+            const bt = (b.createdAt && b.createdAt.toMillis) ? b.createdAt.toMillis() : 0;
+            return bt - at;
+          });
+      }catch(err){ console.error("YF.qa: listAllForAdmin failed", err); return []; }
     }
   };
 
@@ -8859,6 +9055,14 @@ Take a screenshot of the successful payment confirmation."></textarea>
         status: "active",
         createdAt: serverTimestamp()
       });
+      // Sales counter + low-stock tracking (added). This is what makes
+      // the "X left in stock" badge and admin's Top Products list
+      // reflect real numbers instead of a field nobody ever wrote to.
+      // Wrapped defensively for the same reason as the purchase marker
+      // below — never block license issuance if this write hiccups.
+      try{
+        await updateDoc(doc(db, "products", order.productId), { sales: increment(1) });
+      }catch(err){ console.error("YF.licenses: sales-counter increment failed (license still issued)", err); }
       // Purchase marker (used by YF.reviews.hasPurchased() to gate
       // reviews to verified buyers). Wrapped defensively — if this
       // write ever fails for any reason, the license itself (already
@@ -10563,12 +10767,14 @@ Take a screenshot of the successful payment confirmation."></textarea>
         const email = document.getElementById("signupEmail").value.trim();
         const password = document.getElementById("signupPassword").value;
         const confirmPassword = document.getElementById("signupConfirmPassword").value;
+        const agreedTerms = document.getElementById("signupAgreeTerms")?.checked;
 
         setFieldError("signupName", "signupNameError", !name);
         setFieldError("signupEmail", "signupEmailError", !email);
         setFieldError("signupPassword", "signupPasswordError", password.length < 6);
         setFieldError("signupConfirmPassword", "signupConfirmPasswordError", password !== confirmPassword);
-        if (!name || !email || password.length < 6 || password !== confirmPassword) return;
+        setFieldError("signupAgreeTerms", "signupAgreeTermsError", !agreedTerms);
+        if (!name || !email || password.length < 6 || password !== confirmPassword || !agreedTerms) return;
 
         const btn = document.getElementById("signupSubmitBtn");
         btn.disabled = true; btn.textContent = "Creating account…";
@@ -11011,9 +11217,12 @@ Take a screenshot of the successful payment confirmation."></textarea>
             <span class="product-card__price-now" style="font-size:var(--fs-2xl)">${formatPrice(pd.price)}</span>
             ${pd.oldPrice ? `<span class="product-card__price-old">${formatPrice(pd.oldPrice)}</span>` : ""}
           </div>
+          ${(() => { const s = stockInfo(pd); return s.label ? `<p style="font-weight:600; color:${s.soldOut ? "var(--c-danger)" : "var(--c-gold-300)"}; margin: -8px 0 var(--sp-3);">${escapeHtml(s.label)}</p>` : ""; })()}
           <div class="product-detail__actions">
-            <button class="btn btn--primary btn--lg" data-action="buy-now" data-id="${pd.id}">Buy Now</button>
-            <button class="btn btn--outline btn--lg" data-action="add-to-cart" data-id="${pd.id}">Add to Cart</button>
+            ${stockInfo(pd).soldOut
+              ? `<button class="btn btn--outline btn--lg" disabled>Sold Out</button>`
+              : `<button class="btn btn--primary btn--lg" data-action="buy-now" data-id="${pd.id}">Buy Now</button>
+            <button class="btn btn--outline btn--lg" data-action="add-to-cart" data-id="${pd.id}">Add to Cart</button>`}
             <button class="product-card__wishlist ${isWished ? "is-active" : ""}" data-wishlist-toggle="${pd.id}" aria-label="Toggle wishlist">
               <svg viewBox="0 0 24 24" fill="${isWished ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
             </button>
@@ -11113,6 +11322,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
       }
       bindProductDetailEvents(layoutEl, tabsEl);
       renderReviewsSection(p.id);
+      renderQaSection(p.id);
       renderProductDownloadArea(p);
       if (window.YF.seo) window.YF.seo.applyForProduct(p);
     }
@@ -11379,6 +11589,115 @@ Take a screenshot of the successful payment confirmation."></textarea>
               console.error("YF.reviews: delete own review failed", err);
               window.YF.ui.toast({ type:"danger", title:"Couldn't delete review", message: err.message || "Please try again." });
               btn.disabled = false;
+            }
+          });
+        });
+      }
+    }
+
+    /* ==========================================================
+       SECTION 23i: PRODUCT Q&A (added) — separate from Reviews.
+       Any signed-in visitor can ask (no purchase required); only an
+       admin/product_manager session can answer.
+       ========================================================== */
+    function qaCardHTML(q){
+      const currentUser = window.YF.auth && window.YF.auth.currentUser;
+      const canAnswer = window.YF.roles && window.YF.roles.canAccessAdminRoute && (window.YF.auth.currentRole === "admin" || window.YF.auth.currentRole === "product_manager");
+      const isOwn = currentUser && q.uid === currentUser.uid;
+      const dateMs = (q.createdAt && q.createdAt.toMillis) ? q.createdAt.toMillis() : (q.createdAt || Date.now());
+      return `
+        <div class="card review-card">
+          <div class="review-card__head">
+            <div class="review-card__user">
+              <div class="review-card__avatar">${escapeHtml((q.userName || "A").trim().slice(0, 2).toUpperCase())}</div>
+              <div>
+                <div class="review-card__name">${escapeHtml(q.userName || "Anonymous")}</div>
+                <div class="review-card__date">${formatDate(dateMs)}</div>
+              </div>
+            </div>
+          </div>
+          <p class="review-card__comment"><strong>Q:</strong> ${escapeHtml(q.question)}</p>
+          ${q.answer
+            ? `<p class="review-card__comment" style="color:var(--c-gold-300);"><strong>A (${escapeHtml(q.answeredBy || "Seller")}):</strong> ${escapeHtml(q.answer)}</p>`
+            : canAnswer
+              ? `<div class="form-group u-mt-2">
+                  <textarea class="form-input" data-qa-answer-input="${escapeHtml(q.id)}" rows="2" placeholder="Write an answer…"></textarea>
+                  <button type="button" class="btn btn--primary btn--sm u-mt-2" data-qa-answer-submit="${escapeHtml(q.id)}">Post Answer</button>
+                </div>`
+              : `<p class="u-text-muted" style="font-size:var(--fs-sm);">Awaiting an answer from the seller.</p>`}
+          ${isOwn && !q.answer ? `<button type="button" class="admin-action-btn admin-action-btn--danger u-mt-2" data-qa-delete="${escapeHtml(q.id)}">Delete my question</button>` : ""}
+        </div>`;
+    }
+
+    async function renderQaSection(productId){
+      const formWrap = document.getElementById("qaFormWrap");
+      const listEl = document.getElementById("qaList");
+      if (formWrap){
+        const user = window.YF.auth && window.YF.auth.currentUser;
+        formWrap.innerHTML = user
+          ? `
+            <h3 style="margin-bottom:var(--sp-3);">Ask a question</h3>
+            <div class="form-group">
+              <textarea class="form-input" id="qaQuestionInput" maxlength="500" placeholder="e.g. Does this work with...?"></textarea>
+            </div>
+            <button class="btn btn--primary btn--sm" id="qaSubmitBtn" type="button">Submit Question</button>`
+          : `
+            <div class="review-form__locked">
+              <span>Log in to ask a question.</span>
+              <button class="btn btn--outline btn--sm" data-action="open-login">Log In</button>
+            </div>`;
+        formWrap.querySelector('[data-action="open-login"]')?.addEventListener("click", () => window.YF.ui.openModal("loginModal"));
+        formWrap.querySelector("#qaSubmitBtn")?.addEventListener("click", async () => {
+          const input = document.getElementById("qaQuestionInput");
+          const val = input ? input.value : "";
+          try{
+            await window.YF.qa.ask(productId, val);
+            window.YF.ui.toast({ type:"success", title:"Question submitted", message:"We'll notify you once it's answered." });
+            renderQaSection(productId);
+          }catch(err){
+            console.error("YF.qa: ask failed", err);
+            window.YF.ui.toast({ type:"danger", title:"Couldn't submit question", message: err.message || "Please try again." });
+          }
+        });
+      }
+      if (listEl){
+        listEl.innerHTML = `<div class="skeleton skeleton--text w-60"></div><div class="skeleton skeleton--text w-40"></div>`;
+        const questions = await window.YF.qa.listForProduct(productId);
+        questions.sort((a, b) => {
+          const at = (a.createdAt && a.createdAt.toMillis) ? a.createdAt.toMillis() : 0;
+          const bt = (b.createdAt && b.createdAt.toMillis) ? b.createdAt.toMillis() : 0;
+          return bt - at;
+        });
+        listEl.innerHTML = questions.length
+          ? questions.map(qaCardHTML).join("")
+          : `<p class="u-text-muted">No questions yet — be the first to ask.</p>`;
+        listEl.querySelectorAll("[data-qa-answer-submit]").forEach(btn => {
+          btn.addEventListener("click", async () => {
+            const qid = btn.dataset.qaAnswerSubmit;
+            const input = listEl.querySelector(`[data-qa-answer-input="${qid}"]`);
+            const val = input ? input.value : "";
+            if (!val.trim()) return;
+            btn.disabled = true;
+            try{
+              await window.YF.qa.answer(qid, val);
+              window.YF.ui.toast({ type:"success", title:"Answer posted", message:"Your answer is now public." });
+              renderQaSection(productId);
+            }catch(err){
+              console.error("YF.qa: answer failed", err);
+              window.YF.ui.toast({ type:"danger", title:"Couldn't post answer", message: err.message || "Please try again." });
+              btn.disabled = false;
+            }
+          });
+        });
+        listEl.querySelectorAll("[data-qa-delete]").forEach(btn => {
+          btn.addEventListener("click", async () => {
+            if (!confirm("Delete your question?")) return;
+            try{
+              await window.YF.qa.remove(btn.dataset.qaDelete);
+              renderQaSection(productId);
+            }catch(err){
+              console.error("YF.qa: delete failed", err);
+              window.YF.ui.toast({ type:"danger", title:"Couldn't delete question", message: err.message || "Please try again." });
             }
           });
         });
@@ -11781,12 +12100,27 @@ Take a screenshot of the successful payment confirmation."></textarea>
       window.YF.ui.openModal("checkoutModal");
     }
 
+    /** SECTION 23i: Low-stock indicator (added). stockLimit is null/
+     *  undefined for unlimited-license products (the overwhelming
+     *  majority) — those get no badge at all. Only products an admin
+     *  has explicitly capped show "Only X left" (<=10 remaining) or
+     *  "Sold Out" (0 remaining, based on the real sales counter now
+     *  incremented in issueLicense()). */
+    function stockInfo(p){
+      if (p.stockLimit == null) return { label: null, soldOut: false, remaining: null };
+      const remaining = Math.max(0, p.stockLimit - (Number(p.sales) || 0));
+      if (remaining <= 0) return { label: "Sold Out", soldOut: true, remaining: 0 };
+      if (remaining <= 10) return { label: `Only ${remaining} left`, soldOut: false, remaining };
+      return { label: null, soldOut: false, remaining };
+    }
+
     function productCardHTML(p){
       const eff = computeEffectivePrice(p);
       const isWished = wishlistIds.has(p.id);
       const isFaved  = favoriteIds.has(p.id);
       const inCart = window.YF.cart && window.YF.cart.has(p.id);
       const isComparing = !!(window.YF.compare && window.YF.compare.isSelected(p.id));
+      const stock = stockInfo(p);
       return `
         <div class="card product-card" data-id="${p.id}">
           <div class="product-card__media">
@@ -11811,12 +12145,15 @@ Take a screenshot of the successful payment confirmation."></textarea>
           <div class="product-card__category">${escapeHtml(categoryLabel(p.category))}</div>
           <h3 class="product-card__title">${escapeHtml(p.title)}</h3>
           <div class="product-card__rating">${starsSVG(p.rating)} <span>${Number(p.rating || 0).toFixed(1)} (${p.ratingCount || 0})</span></div>
+          ${stock.label ? `<div class="u-text-muted" style="font-size:var(--fs-xs); color:${stock.soldOut ? "var(--c-danger)" : "var(--c-gold-300)"}; font-weight:600; margin-top:2px;">${escapeHtml(stock.label)}</div>` : ""}
           <div class="product-card__footer">
             <div class="product-card__price">
               <span class="product-card__price-now">${formatPrice(eff.finalPrice)}</span>
               ${eff.originalPrice ? `<span class="product-card__price-old">${formatPrice(eff.originalPrice)}</span>` : ""}
             </div>
-            <button class="btn ${inCart ? "btn--outline" : "btn--primary"} btn--sm" data-action="add-to-cart" data-id="${p.id}">${inCart ? "In Cart" : "Add"}</button>
+            ${stock.soldOut
+              ? `<button class="btn btn--outline btn--sm" disabled>Sold Out</button>`
+              : `<button class="btn ${inCart ? "btn--outline" : "btn--primary"} btn--sm" data-action="add-to-cart" data-id="${p.id}">${inCart ? "In Cart" : "Add"}</button>`}
           </div>
         </div>`;
     }
@@ -13287,6 +13624,22 @@ Take a screenshot of the successful payment confirmation."></textarea>
         btn.dataset.bound = "true";
         btn.addEventListener("click", () => window.YF.notifications.markAllAsRead(notificationsCache));
       }
+      const pushBtn = document.getElementById("enablePushBtn");
+      if (pushBtn && pushBtn.dataset.bound !== "true"){
+        pushBtn.dataset.bound = "true";
+        pushBtn.addEventListener("click", async () => {
+          pushBtn.disabled = true; pushBtn.textContent = "Enabling…";
+          try{
+            await window.YF.push.enable();
+            pushBtn.textContent = "🔔 Push Notifications Enabled";
+            window.YF.ui.toast({ type:"success", title:"Push enabled", message:"You'll get notified on this device even when the tab is closed." });
+          }catch(err){
+            console.error("YF.push: enable failed", err);
+            window.YF.ui.toast({ type:"danger", title:"Couldn't enable push", message: err.message || "Please try again." });
+            pushBtn.disabled = false; pushBtn.textContent = "🔔 Enable Push Notifications on This Device";
+          }
+        });
+      }
     }
 
     /* ==========================================================
@@ -13944,6 +14297,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
               // safely defaults to published/not-featured.
               status: data.status || "published",
               featured: !!data.featured,
+              stockLimit: data.stockLimit != null ? Number(data.stockLimit) : null,
               createdAt: (data.createdAt && data.createdAt.toMillis) ? data.createdAt.toMillis() : (data.createdAt || Date.now())
             };
           });
@@ -16579,6 +16933,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
               sales: Number(data.sales) || 0,
               status: data.status || "published",
               featured: !!data.featured,
+              stockLimit: data.stockLimit != null ? Number(data.stockLimit) : null,
               createdAt: (data.createdAt && data.createdAt.toMillis) ? data.createdAt.toMillis() : (data.createdAt || Date.now())
             };
           });
@@ -16703,6 +17058,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
         document.getElementById("productFormFileURL").value = p.fileURL || "";
         document.getElementById("productFormExternalLink").value = p.externalLink || "";
         document.getElementById("productFormFeatured").checked = mode === "duplicate" ? false : !!p.featured;
+        document.getElementById("productFormStockLimit").value = (p.stockLimit != null) ? p.stockLimit : "";
         title.textContent = mode === "edit" ? "Edit Product" : "Duplicate Product";
       } else {
         document.getElementById("productFormDiscountType").value = "none";
@@ -16763,7 +17119,8 @@ Take a screenshot of the successful payment confirmation."></textarea>
         gallery: getGalleryUrls(),
         fileURL: document.getElementById("productFormFileURL").value.trim(),
         externalLink: document.getElementById("productFormExternalLink").value.trim(),
-        featured: document.getElementById("productFormFeatured").checked
+        featured: document.getElementById("productFormFeatured").checked,
+        stockLimit: document.getElementById("productFormStockLimit").value !== "" ? Math.max(0, Number(document.getElementById("productFormStockLimit").value) || 0) : null
       };
       if (!payload.title){
         window.YF.ui.toast({ type:"danger", title:"Title required", message:"Please give the product a title." });
@@ -19656,10 +20013,16 @@ Take a screenshot of the successful payment confirmation."></textarea>
       const el = document.getElementById(elId);
       if (!el) return;
       if (!rows.length){ el.innerHTML = `<p class="u-text-muted">${emptyMsg}</p>`; return; }
+      const max = Math.max(...rows.map(r => r.total), 1);
       el.innerHTML = rows.map((r, i) => `
-        <div class="payment-details__row u-mb-4">
-          <div><div class="payment-details__row-label">#${i + 1} — ${escapeHtml(r.label)}</div><div class="u-text-muted" style="font-size:var(--fs-xs);">${r.count} order${r.count === 1 ? "" : "s"}</div></div>
-          <div class="payment-details__row-value">${formatMoney(r.total)}</div>
+        <div class="u-mb-4">
+          <div class="payment-details__row">
+            <div><div class="payment-details__row-label">#${i + 1} — ${escapeHtml(r.label)}</div><div class="u-text-muted" style="font-size:var(--fs-xs);">${r.count} order${r.count === 1 ? "" : "s"}</div></div>
+            <div class="payment-details__row-value">${formatMoney(r.total)}</div>
+          </div>
+          <div style="height:6px; background:var(--glass-bg-strong); border-radius:var(--r-full); margin-top:6px; overflow:hidden;">
+            <div style="height:100%; width:${Math.max(3, Math.round((r.total / max) * 100))}%; background:linear-gradient(90deg, var(--c-gold-600), var(--c-gold-300)); border-radius:var(--r-full);"></div>
+          </div>
         </div>`).join("");
     }
 
@@ -22757,6 +23120,18 @@ Take a screenshot of the successful payment confirmation."></textarea>
     try{ YF.affiliate.init(); }catch(err){ console.error("YF.affiliate.init failed:", err); }
     try{ YF.referral.init(); }catch(err){ console.error("YF.referral.init failed:", err); }
     try{ YF.abandonedCart.init(); }catch(err){ console.error("YF.abandonedCart.init failed:", err); }
+    try{
+      const banner = document.getElementById("cookieConsentBanner");
+      if (banner){
+        let accepted = false;
+        try{ accepted = localStorage.getItem("yf_cookie_consent") === "true"; }catch(e){}
+        if (!accepted) banner.classList.remove("u-hidden");
+        document.getElementById("cookieConsentAcceptBtn")?.addEventListener("click", () => {
+          try{ localStorage.setItem("yf_cookie_consent", "true"); }catch(e){}
+          banner.classList.add("u-hidden");
+        });
+      }
+    }catch(err){ console.error("Cookie consent banner init failed:", err); }
     try{ YF.seo.init(); }catch(err){ console.error("YF.seo.init failed:", err); }
     try{ YF.admin.init(); }catch(err){ console.error("YF.admin.init failed:", err); }
     try{ YF.siteSettings.init(); }catch(err){ console.error("YF.siteSettings.init failed:", err); }
