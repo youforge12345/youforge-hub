@@ -2809,6 +2809,18 @@ html[data-theme="light"] .product-card:hover{
           <div class="card-grid" id="featuredProductsGrid"><div class="card skeleton-card"><div class="skeleton skeleton--thumb"></div><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--text w-60"></div><div class="skeleton skeleton--text w-40"></div></div><div class="card skeleton-card"><div class="skeleton skeleton--thumb"></div><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--text w-60"></div><div class="skeleton skeleton--text w-40"></div></div><div class="card skeleton-card"><div class="skeleton skeleton--thumb"></div><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--text w-60"></div><div class="skeleton skeleton--text w-40"></div></div><div class="card skeleton-card"><div class="skeleton skeleton--thumb"></div><div class="skeleton skeleton--title"></div><div class="skeleton skeleton--text w-60"></div><div class="skeleton skeleton--text w-40"></div></div></div>
         </section>
 
+        <!-- ---------- BUNDLES (added) ---------- -->
+        <section class="u-mb-4 u-hidden" id="homeSectionBundles">
+          <div class="section-head">
+            <div>
+              <h2>Bundles</h2>
+              <p>Curated product bundles at a combined discount</p>
+            </div>
+            <button class="btn btn--ghost btn--sm" data-route="bundles" data-nav>View All →</button>
+          </div>
+          <div class="card-grid" id="homeBundlesGrid"></div>
+        </section>
+
         <!-- ---------- RECENTLY VIEWED (SECTION 22: YF.recent) ----------
              Hidden until the visitor has opened at least one product.
              Session-only history (in-memory, max 8 items) — rendered
@@ -14411,16 +14423,33 @@ Take a screenshot of the successful payment confirmation."></textarea>
 
     function renderBundlesPage(){
       const grid = document.getElementById("bundlesGrid");
-      if (!grid) return;
-      grid.innerHTML = allBundles.length
-        ? allBundles.map(bundleCardHTML).join("")
-        : `<p class="u-text-muted">No bundles available right now — check back soon.</p>`;
-      grid.querySelectorAll("[data-buy-bundle]").forEach(btn => {
-        btn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          openBundleCheckout(btn.dataset.buyBundle);
+      if (grid){
+        grid.innerHTML = allBundles.length
+          ? allBundles.map(bundleCardHTML).join("")
+          : `<p class="u-text-muted">No bundles available right now — check back soon.</p>`;
+        grid.querySelectorAll("[data-buy-bundle]").forEach(btn => {
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            openBundleCheckout(btn.dataset.buyBundle);
+          });
         });
-      });
+      }
+      // Home page "Bundles" section (added) — shows the first 4, hidden
+      // entirely if there are no published bundles yet.
+      const homeSection = document.getElementById("homeSectionBundles");
+      const homeGrid = document.getElementById("homeBundlesGrid");
+      if (homeSection && homeGrid){
+        homeSection.classList.toggle("u-hidden", allBundles.length === 0);
+        if (allBundles.length){
+          homeGrid.innerHTML = allBundles.slice(0, 4).map(bundleCardHTML).join("");
+          homeGrid.querySelectorAll("[data-buy-bundle]").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+              e.stopPropagation();
+              openBundleCheckout(btn.dataset.buyBundle);
+            });
+          });
+        }
+      }
     }
 
     /** Opens the SAME checkout wizard used by "Buy Now"/Cart, but for
