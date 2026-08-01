@@ -958,6 +958,24 @@ body.sidebar-collapsed .yf-sidebar .yf-sidebar__section-title{ opacity: 0; point
 /* Skeleton card layout preset */
 .skeleton-card{ display:flex; flex-direction:column; }
 
+/* ---- SECTION 23l: Button ripple effect (added) ---- */
+.btn{ position:relative; overflow:hidden; }
+.btn__ripple{
+  position:absolute; border-radius:50%; pointer-events:none;
+  background: rgba(255,255,255,0.35);
+  transform: scale(0); opacity:0.6;
+  animation: yf-ripple 0.55s ease-out;
+}
+html[data-theme="light"] .btn--outline .btn__ripple,
+html[data-theme="light"] .btn--ghost .btn__ripple{ background: rgba(0,0,0,0.12); }
+@keyframes yf-ripple{
+  to{ transform: scale(2.6); opacity:0; }
+}
+@media (prefers-reduced-motion: reduce){
+  .btn__ripple{ display:none; }
+}
+
+
 /* ============================================================
    SECTION 11: UTILITIES
    ============================================================ */
@@ -1347,6 +1365,162 @@ body.sidebar-collapsed .yf-sidebar .yf-sidebar__section-title{ opacity: 0; point
 .spec-list li span:last-child{ color: var(--c-text-hi); font-weight:600; }
 
 .product-detail__tabs{ margin-top: var(--sp-8); }
+
+/* ============================================================
+   SECTION 23k: PRODUCT DETAIL REDESIGN (added)
+   Premium gallery + lightbox + conversion elements. Pure visual/UX
+   layer on top of the SAME data (pd.gallery, pd.price, etc.) and
+   SAME action buttons (data-action="buy-now"/"add-to-cart",
+   data-wishlist-toggle, etc.) — no business logic changed.
+   ============================================================ */
+
+/* ---- Redesigned gallery (click-to-zoom main image) ---- */
+.product-gallery__main{ cursor: zoom-in; }
+.product-gallery__main::after{
+  content: ""; position:absolute; inset:0;
+  background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.25) 100%);
+  opacity:0; transition: opacity var(--dur-fast);
+  pointer-events:none;
+}
+.product-gallery__main:hover::after{ opacity:1; }
+.product-gallery__zoom-hint{
+  position:absolute; bottom: var(--sp-3); right: var(--sp-3);
+  display:flex; align-items:center; gap:6px;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(6px);
+  color:#fff; font-size: var(--fs-xs); font-weight:600;
+  padding: 6px 12px; border-radius: var(--r-full);
+  opacity:0; transition: opacity var(--dur-fast);
+  pointer-events:none;
+}
+.product-gallery__main:hover .product-gallery__zoom-hint{ opacity:1; }
+.product-gallery__counter{
+  position:absolute; top: var(--sp-3); right: var(--sp-3);
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
+  color:#fff; font-size: var(--fs-xs); font-weight:600;
+  padding: 4px 10px; border-radius: var(--r-full);
+}
+.product-gallery__thumb{ position:relative; }
+.product-gallery__nav-arrow{
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:36px; height:36px; border-radius:var(--r-full);
+  background: rgba(0,0,0,0.5); backdrop-filter: blur(6px);
+  border:1px solid rgba(255,255,255,0.2); color:#fff;
+  display:grid; place-items:center; cursor:pointer; z-index:2;
+  opacity:0; transition: opacity var(--dur-fast);
+}
+.product-gallery__main:hover .product-gallery__nav-arrow{ opacity:1; }
+.product-gallery__nav-arrow--prev{ left: var(--sp-3); }
+.product-gallery__nav-arrow--next{ right: var(--sp-3); }
+
+/* ---- Trust badges row ---- */
+.trust-badges{
+  display:flex; flex-wrap:wrap; gap: var(--sp-4);
+  margin: var(--sp-2) 0 var(--sp-5); padding: var(--sp-4) 0;
+  border-top:1px solid var(--glass-border); border-bottom:1px solid var(--glass-border);
+}
+.trust-badge{ display:flex; align-items:center; gap: var(--sp-2); font-size: var(--fs-xs); color: var(--c-text-muted); }
+.trust-badge svg{ width:18px; height:18px; color: var(--c-gold-300); flex-shrink:0; }
+
+/* ---- Feature highlight cards ("What's included") ---- */
+.feature-cards{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--sp-4); margin: var(--sp-6) 0; }
+.feature-card{
+  background: var(--glass-bg); border:1px solid var(--glass-border); border-radius: var(--r-md);
+  padding: var(--sp-4); transition: border-color var(--dur-fast), transform var(--dur-fast);
+}
+.feature-card:hover{ border-color: var(--glass-border-hi); transform: translateY(-2px); }
+.feature-card__icon{ width:36px; height:36px; border-radius:var(--r-sm); background: var(--glass-bg-strong); display:grid; place-items:center; color: var(--c-gold-300); margin-bottom: var(--sp-3); }
+.feature-card__icon svg{ width:18px; height:18px; }
+.feature-card__title{ font-weight:700; color: var(--c-text-hi); font-size: var(--fs-sm); margin-bottom:4px; }
+.feature-card__desc{ font-size: var(--fs-xs); color: var(--c-text-muted); line-height:1.5; }
+
+/* ---- Sticky mobile buy bar ---- */
+.sticky-buy-bar{
+  position:fixed; left:0; right:0; bottom:0; z-index: var(--z-navbar);
+  display:none; align-items:center; gap: var(--sp-3);
+  background: var(--c-bg-elevated-2); border-top:1px solid var(--glass-border-hi);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+  padding: var(--sp-3) var(--sp-4);
+  transform: translateY(100%); transition: transform var(--dur-med) var(--ease-out);
+}
+.sticky-buy-bar.is-visible{ transform: translateY(0); }
+.sticky-buy-bar__info{ flex:1; min-width:0; }
+.sticky-buy-bar__title{ font-size: var(--fs-xs); color: var(--c-text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sticky-buy-bar__price{ font-family: var(--font-display); font-size: var(--fs-lg); color: var(--c-gold-300); font-weight:700; }
+@media (max-width: 860px){
+  .sticky-buy-bar{ display:flex; }
+  body.has-sticky-buy-bar .yf-page#page-product{ padding-bottom:76px; }
+}
+
+/* ---- Fullscreen lightbox ---- */
+.lightbox-backdrop{
+  position:fixed; inset:0; z-index: var(--z-modal, 9999);
+  background: rgba(0,0,0,0.94);
+  display:none; flex-direction:column;
+  touch-action:none;
+}
+.lightbox-backdrop.is-open{ display:flex; }
+.lightbox__top{ display:flex; align-items:center; justify-content:space-between; padding: var(--sp-4); flex-shrink:0; }
+.lightbox__counter{ color:#fff; font-size: var(--fs-sm); font-weight:600; }
+.lightbox__close{
+  width:40px; height:40px; border-radius:var(--r-full); background:rgba(255,255,255,0.1);
+  border:none; color:#fff; display:grid; place-items:center; cursor:pointer;
+}
+.lightbox__stage{
+  flex:1; position:relative; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+  min-height:0;
+}
+.lightbox__img{
+  max-width:100%; max-height:100%; object-fit:contain;
+  user-select:none; -webkit-user-drag:none;
+  transform-origin: center center;
+  will-change: transform;
+}
+.lightbox__arrow{
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:44px; height:44px; border-radius:var(--r-full);
+  background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15);
+  color:#fff; display:grid; place-items:center; cursor:pointer; z-index:2;
+}
+.lightbox__arrow--prev{ left: var(--sp-4); }
+.lightbox__arrow--next{ right: var(--sp-4); }
+.lightbox__thumbs{ display:flex; gap: var(--sp-2); overflow-x:auto; padding: var(--sp-4); flex-shrink:0; }
+.lightbox__thumb{
+  flex-shrink:0; width:56px; height:56px; border-radius:var(--r-sm); overflow:hidden;
+  border:2px solid transparent; opacity:0.5; cursor:pointer; padding:0; background:none;
+}
+.lightbox__thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+.lightbox__thumb.is-active{ opacity:1; border-color: var(--c-gold-300); }
+@media (max-width: 640px){
+  .lightbox__arrow{ display:none; }
+  .lightbox__thumbs{ padding: var(--sp-3); }
+}
+
+/* ---- Q&A accordion / FAQ styling (SECTION 23k — added) ---- */
+.qa-accordion-item{ padding:0; overflow:hidden; }
+.qa-accordion-item summary{
+  list-style:none; cursor:pointer; padding: var(--sp-4);
+  display:flex; align-items:center; justify-content:space-between; gap:var(--sp-3);
+}
+.qa-accordion-item summary::-webkit-details-marker{ display:none; }
+.qa-accordion-item__q{ font-weight:600; color: var(--c-text-hi); font-size: var(--fs-sm); }
+.qa-accordion-item__chevron{ flex-shrink:0; transition: transform var(--dur-fast) var(--ease-out); color: var(--c-text-muted); }
+.qa-accordion-item[open] .qa-accordion-item__chevron{ transform: rotate(180deg); }
+.qa-accordion-item__a{ padding: 0 var(--sp-4) var(--sp-4); border-top:1px solid var(--glass-border); padding-top: var(--sp-3); }
+
+/* ---- Subtle load-in animation (SECTION 23k — added) ---- */
+@keyframes yfFadeUp{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }
+.product-gallery, .product-detail__info{ animation: yfFadeUp 0.45s var(--ease-out, ease) both; }
+.product-detail__info{ animation-delay: 0.06s; }
+.feature-cards .feature-card{ animation: yfFadeUp 0.4s var(--ease-out, ease) both; }
+.feature-cards .feature-card:nth-child(2){ animation-delay: 0.06s; }
+.feature-cards .feature-card:nth-child(3){ animation-delay: 0.12s; }
+@media (prefers-reduced-motion: reduce){
+  .product-gallery, .product-detail__info, .feature-cards .feature-card{ animation: none; }
+}
+
+
+
 .tabs__nav{ display:flex; gap: var(--sp-2); border-bottom:1px solid var(--glass-border); margin-bottom: var(--sp-5); overflow-x:auto; }
 .tab-btn{
   background:transparent; border:none; cursor:pointer;
@@ -3019,6 +3193,19 @@ html[data-theme="light"] .product-card:hover{
           <!-- YF.marketplace injects description / release notes / requirements tabs here -->
         </div>
 
+        <!-- SECTION 23k: Bundle promo (added) — shown only if this
+             product is included in a published bundle. -->
+        <section class="u-mb-4 u-hidden" id="productBundlePromoSection" style="margin-top: var(--sp-8);"></section>
+
+        <!-- SECTION 23k: Frequently Bought Together (added) -->
+        <section class="u-mb-4 u-hidden" id="fbtSection" style="margin-top: var(--sp-8);">
+          <div class="section-head">
+            <h2>Frequently Bought Together</h2>
+            <p class="u-text-muted">Save time — add these together</p>
+          </div>
+          <div id="fbtList"></div>
+        </section>
+
         <section style="margin-top: var(--sp-9);">
           <div class="section-head">
             <h2>Related Products</h2>
@@ -3027,12 +3214,27 @@ html[data-theme="light"] .product-card:hover{
           <div class="card-grid" id="relatedProductsGrid"></div>
         </section>
 
+        <!-- SECTION 23k: Recently Viewed on product page (added) -->
+        <section class="u-mb-4 u-hidden" id="productPageRecentlyViewedSection" style="margin-top: var(--sp-9);">
+          <div class="section-head">
+            <h2>Recently Viewed</h2>
+            <p class="u-text-muted">Pick up where you left off</p>
+          </div>
+          <div class="card-grid" id="productPageRecentlyViewedGrid"></div>
+        </section>
+
         <!-- ---------- RATINGS & REVIEWS ---------- -->
         <section class="reviews-section" style="margin-top: var(--sp-9);">
           <div class="section-head">
             <h2>Ratings &amp; Reviews</h2>
             <p class="u-text-muted" id="reviewsSummary">Loading reviews…</p>
           </div>
+
+          <!-- SECTION 23k: Testimonials highlight strip (added) —
+               a rotating teaser of the product's best reviews, shown
+               above the full list. Reuses the exact same review data;
+               no separate collection. -->
+          <div class="u-hidden" id="productTestimonials" style="margin-bottom: var(--sp-6);"></div>
 
           <div class="review-form card" id="reviewFormWrap">
             <!-- YF.marketplace/YF.reviews injects the review form (or a
@@ -4637,6 +4839,7 @@ html[data-theme="light"] .product-card:hover{
           </div>
           <div class="card" style="padding:var(--sp-5);">
             <h3 style="margin-top:0;">Top Categories</h3>
+            <div style="max-width:220px; margin:0 auto var(--sp-4);"><canvas id="analyticsCategoryPieChart"></canvas></div>
             <div id="analyticsTopCategories"><p class="u-text-muted">No sales yet.</p></div>
           </div>
         </div>
@@ -5917,6 +6120,10 @@ html[data-theme="light"] .product-card:hover{
           <input class="form-input" style="margin-top:var(--sp-2);" type="url" id="productFormImage" placeholder="…or paste an image URL directly">
         </div>
         <div class="form-group">
+          <label class="form-label" for="productFormVideoUrl">Demo Video URL <span class="u-text-muted" style="text-transform:none;">(optional — YouTube/Vimeo link or direct .mp4 URL, shown as the first item in the gallery)</span></label>
+          <input class="form-input" type="url" id="productFormVideoUrl" placeholder="https://www.youtube.com/watch?v=… or https://…/demo.mp4">
+        </div>
+        <div class="form-group">
           <label class="form-label">Gallery Images <span class="u-text-muted" style="text-transform:none;">(optional — extra screenshots buyers can flip through on the product page)</span></label>
           <div class="yf-gallery-grid" id="productFormGalleryList"></div>
           <label class="file-upload-zone" id="productFormGalleryUploadZone" for="productFormGalleryFile">
@@ -6875,6 +7082,48 @@ Take a screenshot of the successful payment confirmation."></textarea>
 <div class="abandoned-cart-banner u-hidden" id="cookieConsentBanner" style="bottom: var(--sp-6); top:auto;">
   <span>We use cookies for login sessions and basic analytics. <a href="#" data-route="privacy" data-nav style="color:var(--c-gold-300);">Privacy Policy</a></span>
   <button type="button" class="btn btn--primary btn--sm" id="cookieConsentAcceptBtn">Accept</button>
+</div>
+
+<!-- ==========================================================
+     SECTION 23k: PRODUCT GALLERY LIGHTBOX (added)
+     Fullscreen image viewer with pinch-to-zoom, double-tap zoom,
+     swipe navigation, and thumbnail strip. Populated/opened by
+     YF.lightbox (see JS) whenever a product's gallery image is
+     clicked. Purely presentational — reads whatever gallery array
+     the currently-open product detail page already has.
+     ========================================================== -->
+<div class="lightbox-backdrop" id="productLightbox">
+  <div class="lightbox__top">
+    <span class="lightbox__counter" id="lightboxCounter">1 / 1</span>
+    <button class="lightbox__close" id="lightboxCloseBtn" aria-label="Close">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="lightbox__stage" id="lightboxStage">
+    <img class="lightbox__img" id="lightboxImg" src="" alt="" draggable="false">
+    <button class="lightbox__arrow lightbox__arrow--prev" id="lightboxPrevBtn" aria-label="Previous image">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <button class="lightbox__arrow lightbox__arrow--next" id="lightboxNextBtn" aria-label="Next image">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+  <div class="lightbox__thumbs" id="lightboxThumbs"></div>
+</div>
+
+<!-- ==========================================================
+     SECTION 23k: STICKY MOBILE BUY BAR (added)
+     Mobile-only (see CSS @media 860px). Mirrors the SAME buy-now/
+     add-to-cart buttons already on the product page — clicking these
+     just proxies a click to the real buttons, so there is exactly
+     ONE code path for the actual purchase logic.
+     ========================================================== -->
+<div class="sticky-buy-bar" id="stickyBuyBar">
+  <div class="sticky-buy-bar__info">
+    <div class="sticky-buy-bar__title" id="stickyBuyBarTitle"></div>
+    <div class="sticky-buy-bar__price" id="stickyBuyBarPrice"></div>
+  </div>
+  <button class="btn btn--primary" id="stickyBuyBarBtn">Buy Now</button>
 </div>
 
 <div class="compare-bar" id="compareBar">
@@ -11395,22 +11644,147 @@ Take a screenshot of the successful payment confirmation."></textarea>
       return Object.assign({}, p, { gallery, version, requirements, description, releaseNotes });
     }
 
+    /** SECTION 23k — added. Shows a promo card if the current product
+     *  is included in any published bundle — reuses allBundles (the
+     *  SAME cache the Bundles page/section already subscribes to, no
+     *  extra Firestore read) and the existing openBundleCheckout()
+     *  flow, so "buy the bundle" here is the exact same code path as
+     *  the dedicated Bundles page. */
+    function renderBundlePromo(productId){
+      const section = document.getElementById("productBundlePromoSection");
+      if (!section) return;
+      const bundle = (typeof allBundles !== "undefined" ? allBundles : []).find(b => Array.isArray(b.productIds) && b.productIds.includes(productId));
+      if (!bundle){ section.classList.add("u-hidden"); section.innerHTML = ""; return; }
+      const included = bundleIncludedProducts(bundle);
+      const originalTotal = included.reduce((sum, p) => sum + (Number(p.price) || 0), 0);
+      const savings = Math.max(0, originalTotal - (Number(bundle.price) || 0));
+      section.classList.remove("u-hidden");
+      section.innerHTML = `
+        <div class="card" style="padding:var(--sp-5); display:flex; align-items:center; gap:var(--sp-5); flex-wrap:wrap; border-color:var(--glass-border-hi);">
+          <img src="${escapeHtml(bundle.image || included[0]?.image || "")}" alt="${escapeHtml(bundle.title)}" style="width:80px; height:80px; border-radius:var(--r-md); object-fit:cover; flex-shrink:0;">
+          <div style="flex:1; min-width:200px;">
+            <div class="u-text-muted" style="font-size:var(--fs-xs); font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:var(--c-gold-300);">Better Together</div>
+            <h3 style="margin:4px 0;">Get it in the "${escapeHtml(bundle.title)}" bundle</h3>
+            <p class="u-text-muted" style="font-size:var(--fs-sm); margin:0;">Includes this product + ${included.length - 1} more${savings > 0 ? ` — save ${formatPrice(savings)}` : ""}</p>
+          </div>
+          <div style="text-align:right;">
+            <div class="product-card__price-now" style="font-size:var(--fs-xl);">${formatPrice(bundle.price)}</div>
+            ${originalTotal > bundle.price ? `<div class="product-card__price-old">${formatPrice(originalTotal)}</div>` : ""}
+            <button class="btn btn--primary btn--sm u-mt-2" data-bundle-promo-buy="${escapeHtml(bundle.id)}">View Bundle</button>
+          </div>
+        </div>`;
+      section.querySelector("[data-bundle-promo-buy]")?.addEventListener("click", (e) => {
+        openBundleCheckout(e.target.dataset.bundlePromoBuy);
+      });
+    }
+
+    /** SECTION 23k — added. "Frequently Bought Together": the current
+     *  product + up to 2 other same-category picks, each with its own
+     *  checkbox, with a combined "Add Selected to Cart" action. No new
+     *  data/analytics needed — same-category products are already
+     *  loaded in allProducts. */
+    function renderFrequentlyBoughtTogether(p){
+      const section = document.getElementById("fbtSection");
+      const listEl = document.getElementById("fbtList");
+      if (!section || !listEl) return;
+      const picks = allProducts.filter(x => x.category === p.category && x.id !== p.id).slice(0, 2);
+      if (!picks.length){ section.classList.add("u-hidden"); return; }
+      section.classList.remove("u-hidden");
+      const items = [p, ...picks];
+      const total = items.reduce((sum, x) => sum + (Number(x.price) || 0), 0);
+      listEl.innerHTML = `
+        <div style="display:flex; flex-wrap:wrap; align-items:center; gap:var(--sp-4);">
+          ${items.map((x, i) => `
+            <label style="display:flex; align-items:center; gap:var(--sp-2); ${i < items.length - 1 ? "padding-right:var(--sp-4); border-right:1px solid var(--glass-border);" : ""}">
+              <input type="checkbox" data-fbt-item="${escapeHtml(x.id)}" ${i === 0 ? "checked disabled" : "checked"}>
+              <img src="${escapeHtml(x.image || "")}" alt="" style="width:44px; height:44px; border-radius:var(--r-sm); object-fit:cover;">
+              <div>
+                <div style="font-size:var(--fs-xs); max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(x.title)}</div>
+                <div class="u-text-muted" style="font-size:var(--fs-xs);">${formatPrice(x.price)}</div>
+              </div>
+            </label>${i < items.length - 1 ? `<span class="u-text-muted">+</span>` : ""}`).join("")}
+          <div style="margin-left:auto; text-align:right;">
+            <div class="u-text-muted" style="font-size:var(--fs-xs);">Total for selected</div>
+            <div class="product-card__price-now" id="fbtTotal" style="font-size:var(--fs-lg);">${formatPrice(total)}</div>
+            <button class="btn btn--primary btn--sm u-mt-2" id="fbtAddBtn">Add Selected to Cart</button>
+          </div>
+        </div>`;
+      function recalcFbtTotal(){
+        const checked = Array.from(listEl.querySelectorAll("[data-fbt-item]:checked")).map(c => c.dataset.fbtItem);
+        const sum = items.filter(x => checked.includes(x.id)).reduce((s, x) => s + (Number(x.price) || 0), 0);
+        const totalEl = document.getElementById("fbtTotal");
+        if (totalEl) totalEl.textContent = formatPrice(sum);
+      }
+      listEl.querySelectorAll("[data-fbt-item]").forEach(cb => cb.addEventListener("change", recalcFbtTotal));
+      document.getElementById("fbtAddBtn")?.addEventListener("click", async () => {
+        if (!(window.YF.auth && window.YF.auth.currentUser)){
+          window.YF.ui.toast({ type:"info", title:"Log in required", message:"Please log in to add items to your cart." });
+          window.YF.ui.openModal("loginModal");
+          return;
+        }
+        const checked = Array.from(listEl.querySelectorAll("[data-fbt-item]:checked")).map(c => c.dataset.fbtItem);
+        let added = 0;
+        for (const id of checked){
+          if (window.YF.cart && !window.YF.cart.has(id)){
+            try{ await window.YF.cart.add(id, 1); added++; }catch(err){ console.error("YF.marketplace: FBT add failed", err); }
+          }
+        }
+        window.YF.ui.toast({ type: added ? "success" : "info", title: added ? "Added to cart" : "Already in cart", message: added ? `${added} item(s) added to your cart.` : "These items are already in your cart." });
+      });
+    }
+
+    /** SECTION 23k — added. Converts a YouTube/Vimeo watch URL into
+     *  its embeddable iframe URL; a direct .mp4/.webm link is
+     *  returned as-is (rendered via a <video> tag instead of an
+     *  iframe — see productGalleryInfoHTML). Returns null for
+     *  anything unrecognized rather than guessing. */
+    function videoEmbedUrl(url){
+      if (!url) return null;
+      const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]+)/);
+      if (yt) return { type: "iframe", src: `https://www.youtube.com/embed/${yt[1]}` };
+      const vimeo = url.match(/vimeo\.com\/(\d+)/);
+      if (vimeo) return { type: "iframe", src: `https://player.vimeo.com/video/${vimeo[1]}` };
+      if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(url)) return { type: "video", src: url };
+      return null;
+    }
+
     function productGalleryInfoHTML(pd){
       const discount = computeDiscount(pd.price, pd.oldPrice);
       const isWished = wishlistIds.has(pd.id);
       const isFaved  = favoriteIds.has(pd.id);
       return `
         <div class="product-gallery">
-          <div class="product-gallery__main">
+          <div class="product-gallery__main" id="productGalleryMain" data-index="0">
             <img src="${escapeHtml(pd.gallery[0])}" alt="${escapeHtml(pd.title)}" id="productGalleryMainImg" decoding="async" fetchpriority="high">
+            <div id="productGalleryVideoWrap" class="u-hidden" style="position:absolute; inset:0; background:#000;"></div>
             ${discount > 0 ? `<span class="product-card__discount">-${discount}%</span>` : ""}
+            ${pd.gallery.length > 1 ? `<span class="product-gallery__counter" id="productGalleryCounter">1 / ${pd.gallery.length}</span>` : ""}
+            <span class="product-gallery__zoom-hint">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              View fullscreen
+            </span>
+            ${pd.gallery.length > 1 ? `
+            <button class="product-gallery__nav-arrow product-gallery__nav-arrow--prev" data-gallery-prev aria-label="Previous image">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button class="product-gallery__nav-arrow product-gallery__nav-arrow--next" data-gallery-next aria-label="Next image">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>` : ""}
           </div>
+          ${(pd.gallery.length > 1 || pd.videoUrl) ? `
           <div class="product-gallery__thumbs">
+            ${pd.videoUrl && videoEmbedUrl(pd.videoUrl) ? `
+              <button class="product-gallery__thumb" data-video-thumb aria-label="Watch demo video" style="position:relative;">
+                <img src="${escapeHtml(pd.gallery[0])}" alt="Demo video" loading="lazy" decoding="async">
+                <span style="position:absolute; inset:0; display:grid; place-items:center; background:rgba(0,0,0,0.4);">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+                </span>
+              </button>` : ""}
             ${pd.gallery.map((src, i) => `
-              <button class="product-gallery__thumb ${i === 0 ? "is-active" : ""}" data-thumb="${escapeHtml(src)}" aria-label="View screenshot ${i + 1}">
+              <button class="product-gallery__thumb ${i === 0 ? "is-active" : ""}" data-thumb="${escapeHtml(src)}" data-thumb-index="${i}" aria-label="View screenshot ${i + 1}">
                 <img src="${escapeHtml(src)}" alt="Screenshot ${i + 1} of ${escapeHtml(pd.title)}" loading="lazy" decoding="async">
               </button>`).join("")}
-          </div>
+          </div>` : ""}
         </div>
         <div class="product-detail__info">
           <div class="product-card__category">${escapeHtml(categoryLabel(pd.category))}</div>
@@ -11426,7 +11800,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
             ${pd.oldPrice ? `<span class="product-card__price-old">${formatPrice(pd.oldPrice)}</span>` : ""}
           </div>
           ${(() => { const s = stockInfo(pd); return s.label ? `<p style="font-weight:600; color:${s.soldOut ? "var(--c-danger)" : "var(--c-gold-300)"}; margin: -8px 0 var(--sp-3);">${escapeHtml(s.label)}</p>` : ""; })()}
-          <div class="product-detail__actions">
+          <div class="product-detail__actions" id="productDetailActions">
             ${stockInfo(pd).soldOut
               ? `<button class="btn btn--outline btn--lg" disabled>Sold Out</button>`
               : `<button class="btn btn--primary btn--lg" data-action="buy-now" data-id="${pd.id}">Buy Now</button>
@@ -11445,12 +11819,41 @@ Take a screenshot of the successful payment confirmation."></textarea>
                renderProductDownloadArea() below. Guests and buyers
                without a valid license see nothing here. -->
           <div class="product-detail__download-area u-mt-3" id="productDownloadArea"></div>
+
+          <!-- SECTION 23k: Trust badges (added) -->
+          <div class="trust-badges">
+            <span class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Secure Checkout</span>
+            <span class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 11-14h-7l1-8z"/></svg>Instant Delivery</span>
+            <span class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4.5 8-11V5l-8-3-8 3v6c0 6.5 8 11 8 11z"/></svg>Licensed Use</span>
+            <span class="trust-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16.5 14.5"/></svg>Lifetime Access</span>
+          </div>
+
           <ul class="spec-list">
             <li><span>Category</span><span>${escapeHtml(categoryLabel(pd.category))}</span></li>
             <li><span>Version</span><span>${pd.version}</span></li>
             <li><span>Last updated</span><span>${formatDate(pd.createdAt)}</span></li>
             <li><span>Total sales</span><span>${pd.sales || 0}+</span></li>
           </ul>
+        </div>
+
+        <!-- SECTION 23k: Feature highlight cards (added) — derived
+             from the SAME requirements array already on the product,
+             so no new admin fields required; falls back to sensible
+             generic highlights when a product has none listed. -->
+        <div class="feature-cards" style="grid-column: 1 / -1;">
+          ${(pd.requirements && pd.requirements.length ? pd.requirements.slice(0, 3) : ["Instant access after purchase", "Free updates included", "Priority support"]).map((req, i) => {
+            const icons = [
+              `<path d="M13 2L3 14h7l-1 8 11-14h-7l1-8z"/>`,
+              `<path d="M21 12a9 9 0 1 1-6.219-8.56"/><path d="M12 3v9l4 2"/>`,
+              `<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>`
+            ];
+            return `
+            <div class="feature-card">
+              <div class="feature-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${icons[i % 3]}</svg></div>
+              <div class="feature-card__title">${escapeHtml(req.length > 40 ? req.slice(0, 40) + "…" : req)}</div>
+              <div class="feature-card__desc">Included with every purchase of ${escapeHtml(pd.title)}.</div>
+            </div>`;
+          }).join("")}
         </div>`;
     }
 
@@ -11484,15 +11887,66 @@ Take a screenshot of the successful payment confirmation."></textarea>
         </div>`;
     }
 
+    let currentProductGallery = []; // set by renderProductDetail(); read by gallery nav + lightbox + sticky bar
+    let currentProductVideoUrl = null; // SECTION 23k — added
+
+    function setGalleryIndex(layoutEl, index){
+      const gallery = currentProductGallery;
+      if (!gallery.length) return;
+      const i = ((index % gallery.length) + gallery.length) % gallery.length;
+      const mainEl = document.getElementById("productGalleryMain");
+      const mainImg = document.getElementById("productGalleryMainImg");
+      const counter = document.getElementById("productGalleryCounter");
+      hideGalleryVideo(); // SECTION 23k — switching to an image stops any playing demo video
+      if (mainImg) mainImg.src = gallery[i];
+      if (mainEl) mainEl.dataset.index = String(i);
+      if (counter) counter.textContent = `${i + 1} / ${gallery.length}`;
+      if (layoutEl){
+        layoutEl.querySelectorAll(".product-gallery__thumb[data-thumb-index]").forEach(t => t.classList.toggle("is-active", Number(t.dataset.thumbIndex) === i));
+      }
+    }
+
+    /** SECTION 23k — added. Demo video playback, inline in the main
+     *  gallery box (never disturbs the img element underneath, so
+     *  switching back to an image via setGalleryIndex just works). */
+    function showGalleryVideo(videoUrl){
+      const embed = videoEmbedUrl(videoUrl);
+      const wrap = document.getElementById("productGalleryVideoWrap");
+      const img = document.getElementById("productGalleryMainImg");
+      if (!embed || !wrap) return;
+      wrap.innerHTML = embed.type === "iframe"
+        ? `<iframe src="${escapeHtml(embed.src)}" style="width:100%; height:100%; border:0;" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`
+        : `<video src="${escapeHtml(embed.src)}" style="width:100%; height:100%; object-fit:contain;" controls autoplay playsinline></video>`;
+      wrap.classList.remove("u-hidden");
+      if (img) img.style.visibility = "hidden";
+    }
+    function hideGalleryVideo(){
+      const wrap = document.getElementById("productGalleryVideoWrap");
+      const img = document.getElementById("productGalleryMainImg");
+      if (wrap && !wrap.classList.contains("u-hidden")){ wrap.classList.add("u-hidden"); wrap.innerHTML = ""; }
+      if (img) img.style.visibility = "";
+    }
+
     function bindProductDetailEvents(layoutEl, tabsEl){
       if (layoutEl){
         layoutEl.querySelectorAll("[data-thumb]").forEach(btn => {
-          btn.addEventListener("click", () => {
-            const mainImg = document.getElementById("productGalleryMainImg");
-            if (mainImg) mainImg.src = btn.dataset.thumb;
-            layoutEl.querySelectorAll(".product-gallery__thumb").forEach(t => t.classList.remove("is-active"));
-            btn.classList.add("is-active");
-          });
+          btn.addEventListener("click", () => setGalleryIndex(layoutEl, Number(btn.dataset.thumbIndex)));
+        });
+        layoutEl.querySelector("[data-video-thumb]")?.addEventListener("click", () => {
+          if (currentProductVideoUrl) showGalleryVideo(currentProductVideoUrl);
+        });
+        layoutEl.querySelector("[data-gallery-prev]")?.addEventListener("click", (e) => {
+          e.stopPropagation();
+          setGalleryIndex(layoutEl, Number(document.getElementById("productGalleryMain")?.dataset.index || 0) - 1);
+        });
+        layoutEl.querySelector("[data-gallery-next]")?.addEventListener("click", (e) => {
+          e.stopPropagation();
+          setGalleryIndex(layoutEl, Number(document.getElementById("productGalleryMain")?.dataset.index || 0) + 1);
+        });
+        // SECTION 23k — added: click the main image to open the
+        // fullscreen lightbox at the currently-shown index.
+        document.getElementById("productGalleryMain")?.addEventListener("click", () => {
+          if (window.YF.lightbox) window.YF.lightbox.open(currentProductGallery, Number(document.getElementById("productGalleryMain")?.dataset.index || 0));
         });
         bindCardEvents(layoutEl); // wires wishlist / add-to-cart / buy-now (no .product-card here, so nav is a no-op)
       }
@@ -11508,6 +11962,40 @@ Take a screenshot of the successful payment confirmation."></textarea>
       }
     }
 
+    /* ==========================================================
+       SECTION 23k: STICKY MOBILE BUY BAR (added)
+       Shows once the real (in-page) Buy Now button scrolls out of
+       view on a narrow viewport; hides again once it's back in view.
+       The bar's own button just re-clicks the real one, so purchase
+       logic lives in exactly one place.
+       ========================================================== */
+    let stickyBuyBarObserver = null;
+
+    function setupStickyBuyBar(pd){
+      const bar = document.getElementById("stickyBuyBar");
+      const realActions = document.getElementById("productDetailActions");
+      if (!bar || !realActions) return;
+      document.getElementById("stickyBuyBarTitle").textContent = pd.title;
+      document.getElementById("stickyBuyBarPrice").textContent = formatPrice(pd.price);
+      const stickyBtn = document.getElementById("stickyBuyBarBtn");
+      const soldOut = stockInfo(pd).soldOut;
+      stickyBtn.disabled = soldOut;
+      stickyBtn.textContent = soldOut ? "Sold Out" : "Buy Now";
+      stickyBtn.onclick = () => {
+        const realBtn = realActions.querySelector('[data-action="buy-now"]');
+        if (realBtn) realBtn.click();
+        else realActions.scrollIntoView({ behavior: "smooth", block: "center" });
+      };
+      if (stickyBuyBarObserver){ stickyBuyBarObserver.disconnect(); stickyBuyBarObserver = null; }
+      if ("IntersectionObserver" in window){
+        stickyBuyBarObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => bar.classList.toggle("is-visible", !entry.isIntersecting));
+        }, { threshold: 0 });
+        stickyBuyBarObserver.observe(realActions);
+      }
+      document.body.classList.add("has-sticky-buy-bar");
+    }
+
     function renderProductDetail(id){
       const layoutEl  = document.getElementById("productDetailLayout");
       const tabsEl    = document.getElementById("productDetailTabs");
@@ -11520,6 +12008,8 @@ Take a screenshot of the successful payment confirmation."></textarea>
         return;
       }
       const pd = getProductDetails(p);
+      currentProductGallery = pd.gallery; // SECTION 23k — added, read by gallery nav + lightbox
+      currentProductVideoUrl = pd.videoUrl || null;
       if (layoutEl) layoutEl.innerHTML = productGalleryInfoHTML(pd);
       if (tabsEl) tabsEl.innerHTML = productTabsHTML(pd);
       const sameCategory = allProducts.filter(x => x.category === p.category && x.id !== p.id);
@@ -11529,6 +12019,12 @@ Take a screenshot of the successful payment confirmation."></textarea>
         bindCardEvents(relatedEl);
       }
       bindProductDetailEvents(layoutEl, tabsEl);
+      setupStickyBuyBar(pd); // SECTION 23k — added
+      renderBundlePromo(pd.id); // SECTION 23k — added
+      renderFrequentlyBoughtTogether(p); // SECTION 23k — added
+      const rvSection = document.getElementById("productPageRecentlyViewedSection");
+      if (rvSection){ rvSection.dataset.excludeId = id; }
+      if (window.YF.recent) window.YF.recent.render(); // SECTION 23k — added
       renderReviewsSection(p.id);
       renderQaSection(p.id);
       renderProductDownloadArea(p);
@@ -11781,6 +12277,28 @@ Take a screenshot of the successful payment confirmation."></textarea>
           summaryEl.textContent = "No reviews yet — be the first verified buyer to leave one.";
         }
       }
+      // SECTION 23k — added. Testimonials strip: the top 3 highest-
+      // rated reviews WITH a comment, shown as a highlight teaser
+      // above the full list. Same data, no new collection.
+      const testimonialsEl = document.getElementById("productTestimonials");
+      if (testimonialsEl){
+        const testimonials = reviews.filter(r => r.rating >= 4 && r.comment && r.comment.trim()).slice(0, 3);
+        if (testimonials.length){
+          testimonialsEl.classList.remove("u-hidden");
+          testimonialsEl.innerHTML = `
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:var(--sp-4);">
+              ${testimonials.map(t => `
+                <div class="card" style="padding:var(--sp-4); border-color:var(--glass-border-hi);">
+                  ${starsSVG(t.rating)}
+                  <p style="font-size:var(--fs-sm); font-style:italic; margin:var(--sp-2) 0; color:var(--c-text-body);">"${escapeHtml(t.comment.length > 140 ? t.comment.slice(0, 140) + "…" : t.comment)}"</p>
+                  <div class="u-text-muted" style="font-size:var(--fs-xs); font-weight:600;">— ${escapeHtml(t.userName || "Verified Buyer")}</div>
+                </div>`).join("")}
+            </div>`;
+        } else {
+          testimonialsEl.classList.add("u-hidden");
+          testimonialsEl.innerHTML = "";
+        }
+      }
       if (listEl){
         listEl.innerHTML = reviews.length
           ? reviews.map(reviewCardHTML).join("")
@@ -11813,6 +12331,25 @@ Take a screenshot of the successful payment confirmation."></textarea>
       const canAnswer = window.YF.roles && window.YF.roles.canAccessAdminRoute && (window.YF.auth.currentRole === "admin" || window.YF.auth.currentRole === "product_manager");
       const isOwn = currentUser && q.uid === currentUser.uid;
       const dateMs = (q.createdAt && q.createdAt.toMillis) ? q.createdAt.toMillis() : (q.createdAt || Date.now());
+      // SECTION 23k — added: answered questions render as a clean
+      // native <details>/<summary> accordion (no JS needed for the
+      // toggle) — closer to a real FAQ. Unanswered ones (which may
+      // show an admin answer-form or a delete-my-question button)
+      // stay fully expanded since they need to be actionable, not
+      // collapsed away.
+      if (q.answer){
+        return `
+          <details class="card qa-accordion-item">
+            <summary class="qa-accordion-item__q">
+              <span>${escapeHtml(q.question)}</span>
+              <svg class="qa-accordion-item__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </summary>
+            <div class="qa-accordion-item__a">
+              <p class="review-card__comment" style="color:var(--c-gold-300); margin-bottom:4px;">${escapeHtml(q.answer)}</p>
+              <div class="u-text-muted" style="font-size:var(--fs-xs);">Answered by ${escapeHtml(q.answeredBy || "Seller")} · Asked by ${escapeHtml(q.userName || "Anonymous")} on ${formatDate(dateMs)}</div>
+            </div>
+          </details>`;
+      }
       return `
         <div class="card review-card">
           <div class="review-card__head">
@@ -11825,15 +12362,13 @@ Take a screenshot of the successful payment confirmation."></textarea>
             </div>
           </div>
           <p class="review-card__comment"><strong>Q:</strong> ${escapeHtml(q.question)}</p>
-          ${q.answer
-            ? `<p class="review-card__comment" style="color:var(--c-gold-300);"><strong>A (${escapeHtml(q.answeredBy || "Seller")}):</strong> ${escapeHtml(q.answer)}</p>`
-            : canAnswer
-              ? `<div class="form-group u-mt-2">
-                  <textarea class="form-input" data-qa-answer-input="${escapeHtml(q.id)}" rows="2" placeholder="Write an answer…"></textarea>
-                  <button type="button" class="btn btn--primary btn--sm u-mt-2" data-qa-answer-submit="${escapeHtml(q.id)}">Post Answer</button>
-                </div>`
-              : `<p class="u-text-muted" style="font-size:var(--fs-sm);">Awaiting an answer from the seller.</p>`}
-          ${isOwn && !q.answer ? `<button type="button" class="admin-action-btn admin-action-btn--danger u-mt-2" data-qa-delete="${escapeHtml(q.id)}">Delete my question</button>` : ""}
+          ${canAnswer
+            ? `<div class="form-group u-mt-2">
+                <textarea class="form-input" data-qa-answer-input="${escapeHtml(q.id)}" rows="2" placeholder="Write an answer…"></textarea>
+                <button type="button" class="btn btn--primary btn--sm u-mt-2" data-qa-answer-submit="${escapeHtml(q.id)}">Post Answer</button>
+              </div>`
+            : `<p class="u-text-muted" style="font-size:var(--fs-sm);">Awaiting an answer from the seller.</p>`}
+          ${isOwn ? `<button type="button" class="admin-action-btn admin-action-btn--danger u-mt-2" data-qa-delete="${escapeHtml(q.id)}">Delete my question</button>` : ""}
         </div>`;
     }
 
@@ -14538,6 +15073,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
               status: data.status || "published",
               featured: !!data.featured,
               stockLimit: data.stockLimit != null ? Number(data.stockLimit) : null,
+              videoUrl: data.videoUrl || null,
               createdAt: (data.createdAt && data.createdAt.toMillis) ? data.createdAt.toMillis() : (data.createdAt || Date.now())
             };
           });
@@ -15164,16 +15700,191 @@ Take a screenshot of the successful payment confirmation."></textarea>
   })();
 
   /* ============================================================
-     MODULE: YF.abandonedCart — Abandoned Cart Reminder (SECTION 23e
-     — added). Reads the SAME users/{uid}/cart docs YF.cart above
-     already subscribes to (each already carries a real Firestore
-     `addedAt` timestamp) — no new collection, no new Firestore reads.
-     Purely a client-side nudge: a dismissible banner + one toast per
-     session once an item has sat in the cart past the threshold, plus
-     one best-effort reminder email via the same "mail" collection
-     pattern used elsewhere in this app.
+     MODULE: YF.lightbox — Fullscreen Product Gallery (SECTION 23k
+     — added). Vanilla-JS pinch-to-zoom, double-tap zoom, drag-to-pan
+     while zoomed, swipe-to-navigate while not zoomed, thumbnail
+     strip, and keyboard arrows/Escape. Pure presentation layer —
+     opened with whatever gallery array + start index the caller
+     passes in (see bindProductDetailEvents), no Firestore access of
+     its own.
      ============================================================ */
-  YF.abandonedCart = (function(){
+  YF.lightbox = (function(){
+    let gallery = [];
+    let index = 0;
+    let scale = 1, panX = 0, panY = 0;
+    let pinchStartDist = 0, pinchStartScale = 1;
+    let dragStartX = 0, dragStartY = 0, dragStartPanX = 0, dragStartPanY = 0, isDragging = false;
+    let lastTapTime = 0;
+    let swipeStartX = null;
+
+    function els(){
+      return {
+        backdrop: document.getElementById("productLightbox"),
+        img: document.getElementById("lightboxImg"),
+        counter: document.getElementById("lightboxCounter"),
+        thumbs: document.getElementById("lightboxThumbs"),
+        stage: document.getElementById("lightboxStage")
+      };
+    }
+
+    function applyTransform(){
+      const { img } = els();
+      if (img) img.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+    }
+
+    function resetZoom(){
+      scale = 1; panX = 0; panY = 0;
+      applyTransform();
+    }
+
+    function renderThumbs(){
+      const { thumbs } = els();
+      if (!thumbs) return;
+      thumbs.innerHTML = gallery.map((src, i) => `
+        <button class="lightbox__thumb ${i === index ? "is-active" : ""}" data-lb-thumb="${i}">
+          <img src="${src}" alt="Thumbnail ${i + 1}" loading="lazy">
+        </button>`).join("");
+      thumbs.querySelectorAll("[data-lb-thumb]").forEach(btn => {
+        btn.addEventListener("click", () => goTo(Number(btn.dataset.lbThumb)));
+      });
+    }
+
+    function goTo(i){
+      if (!gallery.length) return;
+      index = ((i % gallery.length) + gallery.length) % gallery.length;
+      const { img, counter } = els();
+      if (img) img.src = gallery[index];
+      if (counter) counter.textContent = `${index + 1} / ${gallery.length}`;
+      resetZoom();
+      renderThumbs();
+    }
+
+    function open(imgs, startIndex){
+      gallery = Array.isArray(imgs) && imgs.length ? imgs : [];
+      if (!gallery.length) return;
+      const { backdrop } = els();
+      if (!backdrop) return;
+      backdrop.classList.add("is-open");
+      document.body.style.overflow = "hidden";
+      const multi = gallery.length > 1;
+      document.getElementById("lightboxPrevBtn").style.display = multi ? "" : "none";
+      document.getElementById("lightboxNextBtn").style.display = multi ? "" : "none";
+      document.getElementById("lightboxThumbs").style.display = multi ? "" : "none";
+      goTo(startIndex || 0);
+    }
+
+    function close(){
+      const { backdrop } = els();
+      if (backdrop) backdrop.classList.remove("is-open");
+      document.body.style.overflow = "";
+      resetZoom();
+    }
+
+    function dist(t1, t2){
+      return Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+    }
+
+    function bindOnce(){
+      const { backdrop, stage, img } = els();
+      if (!backdrop || backdrop.dataset.bound === "true") return;
+      backdrop.dataset.bound = "true";
+
+      document.getElementById("lightboxCloseBtn").addEventListener("click", close);
+      document.getElementById("lightboxPrevBtn").addEventListener("click", () => goTo(index - 1));
+      document.getElementById("lightboxNextBtn").addEventListener("click", () => goTo(index + 1));
+      backdrop.addEventListener("click", (e) => { if (e.target === backdrop) close(); });
+
+      document.addEventListener("keydown", (e) => {
+        if (!backdrop.classList.contains("is-open")) return;
+        if (e.key === "Escape") close();
+        else if (e.key === "ArrowLeft") goTo(index - 1);
+        else if (e.key === "ArrowRight") goTo(index + 1);
+      });
+
+      // ---- Double-tap / double-click to zoom ----
+      stage.addEventListener("dblclick", (e) => {
+        if (scale > 1){ resetZoom(); }
+        else { scale = 2.5; applyTransform(); }
+      });
+
+      // ---- Touch: pinch-zoom, double-tap zoom, drag-to-pan, swipe ----
+      stage.addEventListener("touchstart", (e) => {
+        if (e.touches.length === 2){
+          pinchStartDist = dist(e.touches[0], e.touches[1]);
+          pinchStartScale = scale;
+        } else if (e.touches.length === 1){
+          const now = Date.now();
+          if (now - lastTapTime < 300){
+            // double-tap
+            if (scale > 1){ resetZoom(); } else { scale = 2.5; applyTransform(); }
+            lastTapTime = 0;
+          } else {
+            lastTapTime = now;
+          }
+          if (scale > 1){
+            isDragging = true;
+            dragStartX = e.touches[0].clientX; dragStartY = e.touches[0].clientY;
+            dragStartPanX = panX; dragStartPanY = panY;
+          } else {
+            swipeStartX = e.touches[0].clientX;
+          }
+        }
+      }, { passive: true });
+
+      stage.addEventListener("touchmove", (e) => {
+        if (e.touches.length === 2 && pinchStartDist > 0){
+          const newDist = dist(e.touches[0], e.touches[1]);
+          scale = Math.min(4, Math.max(1, pinchStartScale * (newDist / pinchStartDist)));
+          applyTransform();
+        } else if (e.touches.length === 1 && isDragging && scale > 1){
+          panX = dragStartPanX + (e.touches[0].clientX - dragStartX);
+          panY = dragStartPanY + (e.touches[0].clientY - dragStartY);
+          applyTransform();
+        }
+      }, { passive: true });
+
+      stage.addEventListener("touchend", (e) => {
+        isDragging = false;
+        pinchStartDist = 0;
+        if (scale <= 1 && swipeStartX != null && e.changedTouches.length === 1){
+          const deltaX = e.changedTouches[0].clientX - swipeStartX;
+          if (Math.abs(deltaX) > 50){ goTo(deltaX > 0 ? index - 1 : index + 1); }
+        }
+        swipeStartX = null;
+        if (scale < 1) resetZoom();
+      });
+
+      // ---- Desktop: drag-to-pan while zoomed ----
+      img.addEventListener("mousedown", (e) => {
+        if (scale <= 1) return;
+        isDragging = true;
+        dragStartX = e.clientX; dragStartY = e.clientY;
+        dragStartPanX = panX; dragStartPanY = panY;
+        e.preventDefault();
+      });
+      window.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+        panX = dragStartPanX + (e.clientX - dragStartX);
+        panY = dragStartPanY + (e.clientY - dragStartY);
+        applyTransform();
+      });
+      window.addEventListener("mouseup", () => { isDragging = false; });
+
+      // ---- Desktop: scroll-wheel zoom ----
+      stage.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        scale = Math.min(4, Math.max(1, scale + (e.deltaY < 0 ? 0.2 : -0.2)));
+        if (scale === 1){ panX = 0; panY = 0; }
+        applyTransform();
+      }, { passive: false });
+    }
+
+    function init(){ bindOnce(); }
+
+    return { init, open, close };
+  })();
+
+
     const IDLE_THRESHOLD_MS = 60 * 60000; // 60 minutes
     let alreadyToastedThisSession = false;
     let alreadyEmailedThisSession = false;
@@ -17210,6 +17921,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
               status: data.status || "published",
               featured: !!data.featured,
               stockLimit: data.stockLimit != null ? Number(data.stockLimit) : null,
+              videoUrl: data.videoUrl || null,
               createdAt: (data.createdAt && data.createdAt.toMillis) ? data.createdAt.toMillis() : (data.createdAt || Date.now())
             };
           });
@@ -17335,6 +18047,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
         document.getElementById("productFormExternalLink").value = p.externalLink || "";
         document.getElementById("productFormFeatured").checked = mode === "duplicate" ? false : !!p.featured;
         document.getElementById("productFormStockLimit").value = (p.stockLimit != null) ? p.stockLimit : "";
+        document.getElementById("productFormVideoUrl").value = p.videoUrl || "";
         title.textContent = mode === "edit" ? "Edit Product" : "Duplicate Product";
       } else {
         document.getElementById("productFormDiscountType").value = "none";
@@ -17396,6 +18109,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
         fileURL: document.getElementById("productFormFileURL").value.trim(),
         externalLink: document.getElementById("productFormExternalLink").value.trim(),
         featured: document.getElementById("productFormFeatured").checked,
+        videoUrl: document.getElementById("productFormVideoUrl").value.trim() || null,
         stockLimit: document.getElementById("productFormStockLimit").value !== "" ? Math.max(0, Number(document.getElementById("productFormStockLimit").value) || 0) : null
       };
       if (!payload.title){
@@ -20443,6 +21157,38 @@ Take a screenshot of the successful payment confirmation."></textarea>
     let analyticsOrdersCache = [];
     let analyticsPeriod = "monthly";
 
+    let analyticsCategoryPieChart = null;
+
+    /** SECTION 23l — added. Real Chart.js pie chart (the app's first)
+     *  showing revenue share by category — same byCategory data
+     *  renderTopList already uses, just visualized differently.
+     *  Rebuilds (rather than .update()s) on every call since the
+     *  category set itself can change between renders — simplest
+     *  correct approach for a chart that re-renders on every
+     *  Firestore snapshot. */
+    function renderAnalyticsCategoryPie(byCategory){
+      const canvas = document.getElementById("analyticsCategoryPieChart");
+      if (!canvas || typeof Chart === "undefined") return;
+      const entries = Object.values(byCategory).sort((a, b) => b.total - a.total).slice(0, 6);
+      if (analyticsCategoryPieChart){ analyticsCategoryPieChart.destroy(); analyticsCategoryPieChart = null; }
+      if (!entries.length) return;
+      const palette = ["#d4af37", "#e9c877", "#b8912b", "#8f6f1f", "#f6e7c1", "#6b5316"];
+      analyticsCategoryPieChart = new Chart(canvas.getContext("2d"), {
+        type: "pie",
+        data: {
+          labels: entries.map(e => categoryLabel ? categoryLabel(e.label) : e.label),
+          datasets: [{ data: entries.map(e => e.total), backgroundColor: palette, borderWidth: 0 }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: "bottom", labels: { color: "#a89f8c", font: { size: 11 }, boxWidth:10, padding:8 } },
+            tooltip: { callbacks: { label: (ctx) => ` ${ctx.label}: ${formatMoney(ctx.parsed)}` } }
+          }
+        }
+      });
+    }
+
     function renderAnalyticsAll(){
       const approved = analyticsOrdersCache.filter(o => o.status === "approved");
 
@@ -20467,6 +21213,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
         byCategory[key].count += 1;
       });
       renderTopList("analyticsTopCategories", Object.values(byCategory).sort((a, b) => b.total - a.total).slice(0, 5), "No sales yet.");
+      renderAnalyticsCategoryPie(byCategory); // SECTION 23l — added
 
       const byCustomer = {};
       approved.forEach(o => {
@@ -23535,6 +24282,24 @@ Take a screenshot of the successful payment confirmation."></textarea>
     try{ YF.wallet.init(); }catch(err){ console.error("YF.wallet.init failed:", err); }
     try{ YF.affiliate.init(); }catch(err){ console.error("YF.affiliate.init failed:", err); }
     try{ YF.referral.init(); }catch(err){ console.error("YF.referral.init failed:", err); }
+    try{ YF.lightbox.init(); }catch(err){ console.error("YF.lightbox.init failed:", err); }
+    // SECTION 23l — added: Apple-style ripple feedback on any .btn
+    // click, site-wide, via a single delegated listener — never
+    // interferes with the button's own click handler (this just adds
+    // a purely visual, auto-removing child element).
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest(".btn");
+      if (!btn || btn.disabled) return;
+      const rect = btn.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const ripple = document.createElement("span");
+      ripple.className = "btn__ripple";
+      ripple.style.width = ripple.style.height = `${size}px`;
+      ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
+      ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
+      btn.appendChild(ripple);
+      ripple.addEventListener("animationend", () => ripple.remove());
+    });
     try{ YF.abandonedCart.init(); }catch(err){ console.error("YF.abandonedCart.init failed:", err); }
     try{
       const banner = document.getElementById("cookieConsentBanner");
@@ -23754,19 +24519,34 @@ Take a screenshot of the successful payment confirmation."></textarea>
       return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
     }
     function render(){
-      const section = document.getElementById("recentlyViewedSection");
-      const grid = document.getElementById("recentlyViewedGrid");
-      if (!section || !grid) return;
+      // SECTION 23k — added: now renders into whichever of these
+      // section/grid ID pairs exist on the CURRENT page (Home page's
+      // original pair, and/or the Product Detail page's own pair) —
+      // never assumes only one exists, never breaks if only one does.
+      const targets = [
+        { section: "recentlyViewedSection", grid: "recentlyViewedGrid" },
+        { section: "productPageRecentlyViewedSection", grid: "productPageRecentlyViewedGrid" }
+      ];
       const all = (YF.marketplace && YF.marketplace.getAllProducts) ? (YF.marketplace.getAllProducts() || []) : [];
       const items = list().map(id => all.find(p => p.id === id)).filter(Boolean);
-      if (!items.length){ section.classList.add("u-hidden"); return; }
-      section.classList.remove("u-hidden");
-      grid.innerHTML = items.map(p => `
-        <div class="card product-card yf-recent-card" data-recent-id="${esc(p.id)}">
-          <div class="product-card__media"><img src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy"></div>
-          <h3 class="product-card__title">${esc(p.title)}</h3>
-          <div class="product-card__price"><span class="product-card__price-now">${YF.currency.format(Number(p.price) || 0)}</span></div>
-        </div>`).join("");
+      targets.forEach(({ section: sectionId, grid: gridId }) => {
+        const section = document.getElementById(sectionId);
+        const grid = document.getElementById(gridId);
+        if (!section || !grid) return;
+        // On the Product Detail page, never show the product the
+        // visitor is CURRENTLY looking at inside its own "recently
+        // viewed" strip.
+        const excludeId = section.dataset.excludeId || null;
+        const pageItems = excludeId ? items.filter(p => p.id !== excludeId) : items;
+        if (!pageItems.length){ section.classList.add("u-hidden"); return; }
+        section.classList.remove("u-hidden");
+        grid.innerHTML = pageItems.map(p => `
+          <div class="card product-card yf-recent-card" data-recent-id="${esc(p.id)}">
+            <div class="product-card__media"><img src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy"></div>
+            <h3 class="product-card__title">${esc(p.title)}</h3>
+            <div class="product-card__price"><span class="product-card__price-now">${YF.currency.format(Number(p.price) || 0)}</span></div>
+          </div>`).join("");
+      });
     }
     function init(){
       // Capture every product open, regardless of which code path
@@ -24050,6 +24830,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 
 <!-- ============================================================
      SECTION 23d: PWA — service worker registration + install
