@@ -3145,17 +3145,39 @@ html[data-theme="light"] .product-card:hover{
               <div><div class="admin-stat-card__num" id="affiliateStatConversions">0</div><div class="admin-stat-card__label">Conversions</div></div>
             </div>
             <div class="admin-stat-card">
+              <div class="admin-stat-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2l1.5 4h9L18 2"/><path d="M3.5 6h17l-1.6 13a2 2 0 0 1-2 1.8H7.1a2 2 0 0 1-2-1.8z"/></svg></div>
+              <div><div class="admin-stat-card__num" id="affiliateStatProductsPurchased">0</div><div class="admin-stat-card__label">Products Purchased</div></div>
+            </div>
+            <div class="admin-stat-card">
               <div class="admin-stat-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-              <div><div class="admin-stat-card__num" id="affiliateStatEarnings">$0.00</div><div class="admin-stat-card__label">Total Referral Earnings</div></div>
+              <div><div class="admin-stat-card__num" id="affiliateStatApproved">$0.00</div><div class="admin-stat-card__label">Approved Commission</div></div>
+            </div>
+            <div class="admin-stat-card">
+              <div class="admin-stat-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+              <div><div class="admin-stat-card__num" id="affiliateStatPending">$0.00</div><div class="admin-stat-card__label">Pending Commission</div></div>
+            </div>
+            <div class="admin-stat-card">
+              <div class="admin-stat-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+              <div><div class="admin-stat-card__num" id="affiliateStatPaid">$0.00</div><div class="admin-stat-card__label">Paid Commission</div></div>
+            </div>
+            <div class="admin-stat-card">
+              <div class="admin-stat-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+              <div><div class="admin-stat-card__num" id="affiliateStatEarnings">$0.00</div><div class="admin-stat-card__label">Available Balance</div></div>
             </div>
           </div>
-          <div class="card u-mb-4" style="padding:var(--sp-5);">
-            <h3 style="margin-top:0;">Your Referral Link</h3>
-            <div class="payment-details__row">
-              <div><div class="payment-details__row-value" id="affiliateLinkValue" style="word-break:break-all;">—</div></div>
-              <button class="payment-details__copy" id="affiliateLinkCopyBtn" type="button" aria-label="Copy link">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-              </button>
+          <div class="card u-mb-4" style="padding:var(--sp-5); display:flex; gap:var(--sp-5); flex-wrap:wrap; align-items:flex-start;">
+            <div style="flex:1; min-width:260px;">
+              <h3 style="margin-top:0;">Your Referral Link</h3>
+              <div class="payment-details__row">
+                <div><div class="payment-details__row-value" id="affiliateLinkValue" style="word-break:break-all;">—</div></div>
+                <button class="payment-details__copy" id="affiliateLinkCopyBtn" type="button" aria-label="Copy link">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                </button>
+              </div>
+            </div>
+            <div style="text-align:center;">
+              <img id="affiliateQrCode" src="" alt="QR code for your referral link" width="120" height="120" style="border-radius:var(--r-md); background:#fff; padding:6px;">
+              <div class="u-text-muted" style="font-size:var(--fs-xs); margin-top:4px;">Scan to share</div>
             </div>
           </div>
           <h3>Referral Sales History</h3>
@@ -4509,15 +4531,30 @@ html[data-theme="light"] .product-card:hover{
            ========================================================== -->
       <div class="yf-page u-hidden" id="page-admin-affiliates">
         <section class="u-mb-4">
-          <h1>Affiliates</h1>
-          <p class="u-text-muted">Every enrolled affiliate, their referral code, commission rate, and lifetime stats</p>
+          <h1>Affiliate / Referral Program</h1>
+          <p class="u-text-muted">Flat commission per approved order — same amount whether it's a single product or a bundle</p>
         </section>
+
+        <!-- SECTION 23j: Affiliate stats cards (added) -->
+        <div class="admin-stats-grid u-mb-6">
+          <div class="card admin-stat-card"><div class="admin-stat-card__label">Total Affiliates</div><div class="admin-stat-card__num" id="affStatTotalAffiliates">—</div></div>
+          <div class="card admin-stat-card"><div class="admin-stat-card__label">Total Referrals</div><div class="admin-stat-card__num" id="affStatTotalReferrals">—</div></div>
+          <div class="card admin-stat-card"><div class="admin-stat-card__label">Pending Commissions</div><div class="admin-stat-card__num" id="affStatPending">—</div></div>
+          <div class="card admin-stat-card"><div class="admin-stat-card__label">Approved Commissions</div><div class="admin-stat-card__num" id="affStatApproved">—</div></div>
+          <div class="card admin-stat-card"><div class="admin-stat-card__label">Paid Commissions</div><div class="admin-stat-card__num" id="affStatPaid">—</div></div>
+          <div class="card admin-stat-card"><div class="admin-stat-card__label">Total Commission Amount</div><div class="admin-stat-card__num" id="affStatTotalAmount">—</div></div>
+        </div>
+
+        <h3>Top Affiliates</h3>
+        <div id="affTopAffiliatesList" class="u-mb-6"><p class="u-text-muted">Loading…</p></div>
+
+        <h3>Affiliates</h3>
         <div class="admin-toolbar">
           <div class="admin-toolbar__filters">
             <input type="text" class="form-input admin-search-input" id="adminAffiliateSearch" placeholder="Search email or code…">
           </div>
         </div>
-        <div class="data-table-wrap">
+        <div class="data-table-wrap u-mb-6">
           <table class="data-table">
             <thead>
               <tr>
@@ -4531,6 +4568,35 @@ html[data-theme="light"] .product-card:hover{
               </tr>
             </thead>
             <tbody id="adminAffiliatesTableBody">
+              <tr class="skeleton-row"><td colspan="7"><div class="skeleton skeleton--text w-60"></div></td></tr>
+              <tr class="skeleton-row"><td colspan="7"><div class="skeleton skeleton--text w-60"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Recent Referral Orders (Commission Ledger)</h3>
+        <div class="admin-toolbar">
+          <div class="admin-toolbar__filters" id="affCommissionStatusTabs">
+            <button type="button" class="order-status-tab is-active" data-comm-filter="all">All</button>
+            <button type="button" class="order-status-tab" data-comm-filter="approved">Approved</button>
+            <button type="button" class="order-status-tab" data-comm-filter="paid">Paid</button>
+            <button type="button" class="order-status-tab" data-comm-filter="rejected">Rejected</button>
+          </div>
+        </div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Affiliate</th>
+                <th>Product</th>
+                <th>Order Amount</th>
+                <th>Commission</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminCommissionsTableBody">
               <tr class="skeleton-row"><td colspan="7"><div class="skeleton skeleton--text w-60"></div></td></tr>
               <tr class="skeleton-row"><td colspan="7"><div class="skeleton skeleton--text w-60"></div></td></tr>
             </tbody>
@@ -4899,6 +4965,11 @@ html[data-theme="light"] .product-card:hover{
           <div class="form-group">
             <label class="form-label" for="siteFormReferralReward">Referral Reward ($) <span class="u-text-muted" style="text-transform:none;">(credited to BOTH the referrer's and the new customer's wallet once the new customer's first order is approved — 0 = off)</span></label>
             <input class="form-input" type="number" id="siteFormReferralReward" min="0" step="0.01" style="max-width:200px;">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="siteFormAffiliateCommission">Affiliate Commission ($ per order) <span class="u-text-muted" style="text-transform:none;">(flat amount paid to the Affiliate Program's referrer on every approved order — same amount for a single product or a bundle)</span></label>
+            <input class="form-input" type="number" id="siteFormAffiliateCommission" min="0" step="0.01" style="max-width:200px;">
           </div>
 
           <div class="form-group">
@@ -7618,14 +7689,19 @@ Take a screenshot of the successful payment confirmation."></textarea>
     }catch(err){ return null; }
   }
 
-  /** Affiliate System (Phase C) — called ONLY from
-   *  approveOrderAndIssueLicense(), i.e. only ever inside an
-   *  admin-triggered action (same trust boundary as the rest of the
-   *  approval flow, which already writes licenses/notifications for
-   *  other users). Looks up the affiliate that owns order.affiliateCode,
-   *  blocks self-referral by comparing REAL uids (not client-cached
-   *  codes), and — if valid — credits the affiliate's wallet and
-   *  records an auditable affiliateSales row.
+  /** Affiliate System (Phase C, updated to SECTION 23j flat-commission
+   *  model) — called ONLY from approveOrderAndIssueLicense(), i.e.
+   *  only ever inside an admin-triggered action (same trust boundary
+   *  as the rest of the approval flow, which already writes licenses/
+   *  notifications for other users). Looks up the affiliate that owns
+   *  order.affiliateCode, blocks self-referral by comparing REAL uids
+   *  (not client-cached codes), and — if valid — credits the
+   *  affiliate's wallet a FLAT amount (Site Settings ›
+   *  affiliateFlatCommission, default $5) and records an auditable
+   *  affiliateSales row. This is intentionally per-ORDER, not
+   *  per-item: a bundle order is still exactly one order, so it pays
+   *  exactly the same flat commission as a single-product order —
+   *  never per-included-product.
    *  Never throws: a missing/invalid/suspended affiliate code just
    *  means no commission, and must never block the order approval
    *  itself from completing. */
@@ -7640,9 +7716,15 @@ Take a screenshot of the successful payment confirmation."></textarea>
       if (affiliate.status === "suspended") return;
       if (affiliate.uid === order.uid) return; // no self-referral commission
 
-      const commissionPercent = Number(affiliate.commissionPercent) || 0;
-      if (commissionPercent <= 0) return;
-      const commissionAmount = Math.round(Number(order.amount) * (commissionPercent / 100) * 100) / 100;
+      // Already paid a commission for this exact order? Never pay
+      // twice — this guards against approveOrderAndIssueLicense()
+      // somehow running more than once for the same order (e.g. an
+      // admin double-click before the button disabled itself).
+      const existing = await getDocs(query(collection(db, "affiliateSales"), where("orderId", "==", order.id)));
+      if (!existing.empty) return;
+
+      const site = (window.YF.siteSettings && window.YF.siteSettings.getSite()) || {};
+      const commissionAmount = Math.round((Number(site.affiliateFlatCommission) || 0) * 100) / 100;
       if (!(commissionAmount > 0)) return;
 
       const walletRef = doc(db, "wallets", affiliate.uid);
@@ -7652,7 +7734,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
         const current = walletSnap.exists() ? Number(walletSnap.data().balance) || 0 : 0;
         const newBalance = Math.round((current + commissionAmount) * 100) / 100;
         tx.set(walletRef, { balance: newBalance, updatedAt: serverTimestamp() }, { merge: true });
-        tx.set(doc(collection(db, "wallets", affiliate.uid, "transactions")), {
+        tx.set(doc(db, "wallets", affiliate.uid, "transactions", saleRef.id), {
           type: "commission", amount: commissionAmount, balanceAfter: newBalance,
           note: `Affiliate commission — order "${order.productTitle || order.productId}"`,
           createdAt: serverTimestamp(), createdBy: "system"
@@ -7661,15 +7743,111 @@ Take a screenshot of the successful payment confirmation."></textarea>
           affiliateUid: affiliate.uid, code: order.affiliateCode,
           orderId: order.id, buyerUid: order.uid,
           productId: order.productId || null, productTitle: order.productTitle || "",
-          orderAmount: Number(order.amount) || 0, commissionPercent, commissionAmount,
+          isBundle: !!order.isBundle,
+          orderAmount: Number(order.amount) || 0, commissionAmount,
           status: "approved", createdAt: serverTimestamp()
         });
         tx.set(doc(db, "affiliates", affiliate.uid), {
-          totalConversions: increment(1), totalEarnings: increment(commissionAmount)
+          totalConversions: increment(1), totalEarnings: increment(commissionAmount),
+          pendingCommissions: 0, // this system credits on order-approval directly — see module header
+          approvedCommissions: increment(commissionAmount)
+        }, { merge: true });
+        // Denormalized onto the order itself too, so an admin looking
+        // at Payment Approvals (or exporting orders) can see the
+        // commission outcome without a second lookup into
+        // affiliateSales — the affiliateSales row above remains the
+        // source of truth for reject/mark-paid actions.
+        tx.set(doc(db, "orders", order.id), {
+          affiliateCommission: commissionAmount,
+          affiliateStatus: "approved",
+          referrerId: affiliate.uid
         }, { merge: true });
       });
     }catch(err){
       console.error("YF.orders: creditAffiliateCommission failed (order approval still succeeds)", err);
+    }
+  }
+
+  /** SECTION 23j — added. ADMIN-only: claws back a previously-approved
+   *  commission (e.g. the underlying order later turned out to be
+   *  fraudulent/refunded). Deducts the commission from the
+   *  affiliate's wallet balance (never below zero) and flips the
+   *  affiliateSales row + denormalized order fields to "rejected".
+   *  A commission already marked "paid" can't be rejected here —
+   *  that money has already left the platform's books; handle that
+   *  case manually. */
+  async function rejectAffiliateCommission(saleId){
+    const saleRef = doc(db, "affiliateSales", saleId);
+    const saleSnap = await getDoc(saleRef);
+    if (!saleSnap.exists()) throw new Error("Commission record not found.");
+    const sale = saleSnap.data();
+    if (sale.status === "paid") throw new Error("A paid commission can't be rejected — it's already been paid out.");
+    if (sale.status === "rejected") return; // already rejected, idempotent no-op
+    const walletRef = doc(db, "wallets", sale.affiliateUid);
+    await runTransaction(db, async (tx) => {
+      const walletSnap = await tx.get(walletRef);
+      const current = walletSnap.exists() ? Number(walletSnap.data().balance) || 0 : 0;
+      const newBalance = Math.max(0, Math.round((current - sale.commissionAmount) * 100) / 100);
+      tx.set(walletRef, { balance: newBalance, updatedAt: serverTimestamp() }, { merge: true });
+      tx.set(doc(collection(db, "wallets", sale.affiliateUid, "transactions")), {
+        type: "commission-reversed", amount: -sale.commissionAmount, balanceAfter: newBalance,
+        note: `Commission reversed — order "${sale.productTitle || sale.productId}"`,
+        createdAt: serverTimestamp(), createdBy: "admin"
+      });
+      tx.update(saleRef, { status: "rejected", rejectedAt: serverTimestamp() });
+      tx.set(doc(db, "affiliates", sale.affiliateUid), {
+        totalEarnings: increment(-sale.commissionAmount),
+        approvedCommissions: increment(-sale.commissionAmount)
+      }, { merge: true });
+      if (sale.orderId){
+        tx.set(doc(db, "orders", sale.orderId), { affiliateStatus: "rejected" }, { merge: true });
+      }
+    });
+    if (window.YF.notifications){
+      window.YF.notifications.create({
+        uid: sale.affiliateUid, type: "info", title: "Affiliate commission reversed",
+        message: `Your ${formatMoney ? formatMoney(sale.commissionAmount) : "$" + sale.commissionAmount} commission for "${sale.productTitle || "an order"}" was reversed.`
+      });
+    }
+  }
+
+  /** SECTION 23j — added. ADMIN-only: marks an already-approved
+   *  commission as paid out (e.g. after sending the affiliate their
+   *  money via bank transfer / JazzCash / etc. outside the platform).
+   *  Deducts it from the wallet balance the same way a withdrawal
+   *  would, and tags the affiliateSales row "paid" so it stops
+   *  counting toward "Available Balance" going forward. */
+  async function markAffiliateCommissionPaid(saleId){
+    const saleRef = doc(db, "affiliateSales", saleId);
+    const saleSnap = await getDoc(saleRef);
+    if (!saleSnap.exists()) throw new Error("Commission record not found.");
+    const sale = saleSnap.data();
+    if (sale.status !== "approved") throw new Error("Only an approved commission can be marked paid.");
+    const walletRef = doc(db, "wallets", sale.affiliateUid);
+    await runTransaction(db, async (tx) => {
+      const walletSnap = await tx.get(walletRef);
+      const current = walletSnap.exists() ? Number(walletSnap.data().balance) || 0 : 0;
+      const newBalance = Math.max(0, Math.round((current - sale.commissionAmount) * 100) / 100);
+      tx.set(walletRef, { balance: newBalance, updatedAt: serverTimestamp() }, { merge: true });
+      tx.set(doc(collection(db, "wallets", sale.affiliateUid, "transactions")), {
+        type: "payout", amount: -sale.commissionAmount, balanceAfter: newBalance,
+        note: `Affiliate commission paid out — order "${sale.productTitle || sale.productId}"`,
+        createdAt: serverTimestamp(), createdBy: "admin"
+      });
+      tx.update(saleRef, { status: "paid", paidAt: serverTimestamp() });
+      tx.set(doc(db, "affiliates", sale.affiliateUid), {
+        approvedCommissions: increment(-sale.commissionAmount),
+        paidCommissions: increment(sale.commissionAmount)
+      }, { merge: true });
+      if (sale.orderId){
+        tx.set(doc(db, "orders", sale.orderId), { affiliateStatus: "paid" }, { merge: true });
+      }
+    });
+    if (window.YF.notifications){
+      window.YF.notifications.create({
+        uid: sale.affiliateUid, type: "success", title: "Affiliate commission paid",
+        message: `Your commission for "${sale.productTitle || "an order"}" has been paid out.`
+      });
     }
   }
 
@@ -8985,7 +9163,14 @@ Take a screenshot of the successful payment confirmation."></textarea>
                 : `Your payment for "${order.productTitle || "your order"}" was refunded.` };
         window.YF.notifications.create({ uid: order.uid, type: "info", title: tpl.title, message: tpl.message });
       }
-    }
+    },
+
+    // SECTION 23j — added. Exposed here (not on window.YF.affiliate)
+    // because these are top-level functions in THIS module script;
+    // YF.affiliate lives in a separate <script> further down the page
+    // with no direct closure access to them.
+    rejectAffiliateCommission,
+    markAffiliateCommissionPaid
   };
 
   // -----------------------------------------------------------
@@ -12617,19 +12802,33 @@ Take a screenshot of the successful payment confirmation."></textarea>
 
     function renderAffiliateSales(list){
       const el = document.getElementById("affiliateSalesList");
-      if (!el) return;
-      if (!list.length){ el.innerHTML = `<p class="u-text-muted">No referral sales yet.</p>`; return; }
-      el.innerHTML = list.map(s => {
-        const ms = (s.createdAt && s.createdAt.toMillis) ? s.createdAt.toMillis() : 0;
-        return `
-          <div class="payment-details__row u-mb-4">
-            <div>
-              <div class="payment-details__row-label">${escapeHtml(s.productTitle || "Product")}</div>
-              <div class="u-text-muted" style="font-size:var(--fs-xs);">${ms ? new Date(ms).toLocaleDateString() : ""} · Order ${formatPrice(s.orderAmount)} · ${s.commissionPercent}% commission</div>
-            </div>
-            <div class="payment-details__row-value" style="color:#4caf82;">+${formatPrice(s.commissionAmount)}</div>
-          </div>`;
-      }).join("");
+      if (el){
+        el.innerHTML = !list.length
+          ? `<p class="u-text-muted">No referral sales yet.</p>`
+          : list.map(s => {
+              const ms = (s.createdAt && s.createdAt.toMillis) ? s.createdAt.toMillis() : 0;
+              const statusLabel = s.status === "paid" ? "Paid" : s.status === "rejected" ? "Rejected" : "Approved";
+              const color = s.status === "rejected" ? "var(--c-danger)" : "#4caf82";
+              return `
+              <div class="payment-details__row u-mb-4">
+                <div>
+                  <div class="payment-details__row-label">${escapeHtml(s.productTitle || "Product")}${s.isBundle ? " (bundle)" : ""}</div>
+                  <div class="u-text-muted" style="font-size:var(--fs-xs);">${ms ? new Date(ms).toLocaleDateString() : ""} · Order ${formatPrice(s.orderAmount)} · ${statusLabel}</div>
+                </div>
+                <div class="payment-details__row-value" style="color:${color};">${s.status === "rejected" ? "" : "+"}${formatPrice(s.commissionAmount)}</div>
+              </div>`;
+            }).join("");
+      }
+      // SECTION 23j — added: Products Purchased + Approved/Pending/Paid
+      // breakdown, computed straight from this affiliate's own sales
+      // list — no extra Firestore read needed.
+      const setText = (id, val) => { const node = document.getElementById(id); if (node) node.textContent = val; };
+      setText("affiliateStatProductsPurchased", list.filter(s => s.status !== "rejected").length.toLocaleString());
+      const approved = list.filter(s => s.status === "approved").reduce((sum, s) => sum + (Number(s.commissionAmount) || 0), 0);
+      const paid = list.filter(s => s.status === "paid").reduce((sum, s) => sum + (Number(s.commissionAmount) || 0), 0);
+      setText("affiliateStatApproved", formatPrice(approved));
+      setText("affiliateStatPending", formatPrice(0)); // this system credits on order-approval directly; nothing sits "pending" separately
+      setText("affiliateStatPaid", formatPrice(paid));
     }
 
     async function refreshAffiliateDashboard(){
@@ -12644,10 +12843,28 @@ Take a screenshot of the successful payment confirmation."></textarea>
       enrollCard.classList.add("u-hidden");
       dash.classList.remove("u-hidden");
       document.getElementById("affiliateStatConversions").textContent = (affiliate.totalConversions || 0).toLocaleString();
-      document.getElementById("affiliateStatEarnings").textContent = formatPrice(affiliate.totalEarnings || 0);
-      document.getElementById("affiliateLinkValue").textContent = window.YF.affiliate.getReferralLink(affiliate.code);
+      const referralLink = window.YF.affiliate.getReferralLink(affiliate.code);
+      document.getElementById("affiliateLinkValue").textContent = referralLink;
+      // SECTION 23j — added: QR code via a free image-generation API
+      // (no client-side library/dependency needed) so the referral
+      // link can be shared by scan, not just copy/paste.
+      const qrImg = document.getElementById("affiliateQrCode");
+      if (qrImg) qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(referralLink)}`;
       const clicks = await window.YF.affiliate.getMyClickCount(affiliate.code);
       document.getElementById("affiliateStatClicks").textContent = clicks.toLocaleString();
+      // "Available Balance" (SECTION 23j — added) is the ACTUAL wallet
+      // balance (what a withdrawal request would pay out), not the
+      // lifetime totalEarnings figure — those diverge once any
+      // commission has been paid out or rejected.
+      try{
+        const fb = window.YF.firebase;
+        const user = window.YF.auth && window.YF.auth.currentUser;
+        if (fb && fb.db && user){
+          const walletSnap = await fb.getDoc(fb.doc(fb.db, "wallets", user.uid));
+          const balance = walletSnap.exists() ? Number(walletSnap.data().balance) || 0 : 0;
+          document.getElementById("affiliateStatEarnings").textContent = formatPrice(balance);
+        }
+      }catch(err){ console.error("YF.marketplace: affiliate wallet balance fetch failed", err); }
     }
 
     function bindAffiliatePage(){
@@ -15455,6 +15672,23 @@ Take a screenshot of the successful payment confirmation."></textarea>
       }, (err) => { console.error("YF.affiliate: subscribeAllAffiliates failed", err); cb([]); });
     }
 
+    /** SECTION 23j — added. ADMIN — every commission record across
+     *  every affiliate, for the Recent Referral Orders / Commission
+     *  Ledger table. */
+    function subscribeAllSales(cb){
+      const fb = window.YF.firebase;
+      return fb.onSnapshot(fb.collection(fb.db, "affiliateSales"), (snap) => {
+        cb(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      }, (err) => { console.error("YF.affiliate: subscribeAllSales failed", err); cb([]); });
+    }
+
+    /** SECTION 23j — added. Thin wrappers so admin UI code can call
+     *  window.YF.affiliate.adminRejectCommission(...) — the actual
+     *  functions live on window.YF.orders (see its module header for
+     *  why: they're top-level functions in a different <script>). */
+    async function adminRejectCommission(saleId){ return window.YF.orders.rejectAffiliateCommission(saleId); }
+    async function adminMarkCommissionPaid(saleId){ return window.YF.orders.markAffiliateCommissionPaid(saleId); }
+
     async function adminSetCommission(uid, commissionPercent){
       const fb = window.YF.firebase;
       const pct = Number(commissionPercent);
@@ -15476,7 +15710,8 @@ Take a screenshot of the successful payment confirmation."></textarea>
 
     return {
       init, getMyAffiliate, onChange, enroll, getReferralLink, getMyClickCount, listMySales,
-      subscribeAllAffiliates, adminSetCommission, adminSetStatus
+      subscribeAllAffiliates, adminSetCommission, adminSetStatus,
+      subscribeAllSales, adminRejectCommission, adminMarkCommissionPaid
     };
   })();
 
@@ -15643,7 +15878,8 @@ Take a screenshot of the successful payment confirmation."></textarea>
       firstOrderDiscountPercent: 0,   // 0 disables. Applies once per user (their very first order ever).
       bulkBuyMinQty: 0,               // 0 disables. Minimum total cart quantity to qualify.
       bulkBuyDiscountPercent: 0,
-      referralRewardAmount: 0         // SECTION 23e — added. 0 disables the referral program's cash reward.
+      referralRewardAmount: 0,        // SECTION 23e — added. 0 disables the referral program's cash reward.
+      affiliateFlatCommission: 5      // SECTION 23j — added. Flat $ paid per approved order to the referring affiliate — SAME amount whether the order is a single product or a bundle (one order = one commission, never per-item).
     };
 
     let currentSite = null;
@@ -19900,6 +20136,11 @@ Take a screenshot of the successful payment confirmation."></textarea>
     let affiliatesUnsub = null;
     let affiliateSearch = "";
 
+    // SECTION 23j — added: commission ledger (affiliateSales) state
+    let commissionsCache = [];
+    let commissionsUnsub = null;
+    let commissionFilter = "all";
+
     function getUserEmail(uid){
       const u = usersCache.find(x => x.uid === uid);
       return u ? (u.email || u.name || uid) : uid;
@@ -19911,7 +20152,92 @@ Take a screenshot of the successful payment confirmation."></textarea>
       affiliatesUnsub = window.YF.affiliate.subscribeAllAffiliates((list) => {
         affiliatesCache = list;
         renderAffiliatesTable();
+        renderAffiliateStats();
+        renderTopAffiliates();
       });
+    }
+
+    function subscribeCommissions(){
+      if (commissionsUnsub){ try{ commissionsUnsub(); }catch(e){} commissionsUnsub = null; }
+      if (!(window.YF.affiliate && window.YF.affiliate.subscribeAllSales)){ commissionsCache = []; renderCommissionsTable(); return; }
+      commissionsUnsub = window.YF.affiliate.subscribeAllSales((list) => {
+        commissionsCache = list.sort((a, b) => {
+          const at = (a.createdAt && a.createdAt.toMillis) ? a.createdAt.toMillis() : 0;
+          const bt = (b.createdAt && b.createdAt.toMillis) ? b.createdAt.toMillis() : 0;
+          return bt - at;
+        });
+        renderCommissionsTable();
+        renderAffiliateStats();
+      });
+    }
+
+    /** SECTION 23j — added. Stat cards: Total Affiliates, Total
+     *  Referrals (= total conversions across every affiliate), and
+     *  Pending/Approved/Paid commission counts + total $ — all
+     *  computed client-side from the two caches above, no extra
+     *  Firestore reads. */
+    function renderAffiliateStats(){
+      const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+      setText("affStatTotalAffiliates", affiliatesCache.length.toLocaleString());
+      const totalReferrals = affiliatesCache.reduce((sum, a) => sum + (Number(a.totalConversions) || 0), 0);
+      setText("affStatTotalReferrals", totalReferrals.toLocaleString());
+      const approved = commissionsCache.filter(c => c.status === "approved");
+      const paid = commissionsCache.filter(c => c.status === "paid");
+      setText("affStatPending", "0"); // this system credits on order-approval directly — nothing sits "pending" between order-approve and commission-approve, they're the same action
+      setText("affStatApproved", `${approved.length} (${formatMoney(approved.reduce((s, c) => s + (Number(c.commissionAmount) || 0), 0))})`);
+      setText("affStatPaid", `${paid.length} (${formatMoney(paid.reduce((s, c) => s + (Number(c.commissionAmount) || 0), 0))})`);
+      const totalAmount = commissionsCache.reduce((s, c) => s + (c.status !== "rejected" ? (Number(c.commissionAmount) || 0) : 0), 0);
+      setText("affStatTotalAmount", formatMoney(totalAmount));
+    }
+
+    function renderTopAffiliates(){
+      const el = document.getElementById("affTopAffiliatesList");
+      if (!el) return;
+      const top = [...affiliatesCache].sort((a, b) => (Number(b.totalEarnings) || 0) - (Number(a.totalEarnings) || 0)).slice(0, 5);
+      if (!top.length){ el.innerHTML = `<p class="u-text-muted">No affiliates yet.</p>`; return; }
+      el.innerHTML = top.map((a, i) => `
+        <div class="payment-details__row u-mb-2">
+          <div><div class="payment-details__row-label">#${i + 1} — ${escapeHtml(getUserEmail(a.uid))}</div><div class="u-text-muted" style="font-size:var(--fs-xs);">${a.totalConversions || 0} referrals</div></div>
+          <div class="payment-details__row-value">${formatMoney(a.totalEarnings || 0)}</div>
+        </div>`).join("");
+    }
+
+    function commissionStatusBadge(status){
+      const meta = {
+        approved: { label: "Approved", cls: "status-badge--approved" },
+        paid:     { label: "Paid",     cls: "status-badge--approved" },
+        rejected: { label: "Rejected", cls: "status-badge--rejected" }
+      }[status] || { label: status || "Unknown", cls: "status-badge--pending" };
+      return `<span class="status-badge ${meta.cls}">${escapeHtml(meta.label)}</span>`;
+    }
+
+    function renderCommissionsTable(){
+      const tbody = document.getElementById("adminCommissionsTableBody");
+      if (!tbody) return;
+      const list = commissionFilter === "all" ? commissionsCache : commissionsCache.filter(c => c.status === commissionFilter);
+      if (!list.length){
+        tbody.innerHTML = `<tr><td colspan="7"><div class="admin-empty-state">No commission records match this view.</div></td></tr>`;
+        return;
+      }
+      tbody.innerHTML = list.map(c => {
+        const ms = (c.createdAt && c.createdAt.toMillis) ? c.createdAt.toMillis() : 0;
+        const actions = c.status === "approved"
+          ? `<div class="admin-row-actions">
+              <button type="button" class="admin-action-btn admin-action-btn--success" data-mark-paid="${c.id}">Mark Paid</button>
+              <button type="button" class="admin-action-btn admin-action-btn--danger" data-reject-commission="${c.id}">Reject</button>
+            </div>`
+          : `<span class="u-text-muted">—</span>`;
+        return `
+        <tr data-commission-row="${c.id}">
+          <td class="u-text-muted">${escapeHtml(getUserEmail(c.affiliateUid))}</td>
+          <td class="u-text-muted">${escapeHtml(c.productTitle || c.productId || "—")}${c.isBundle ? ` <span class="u-text-muted" style="font-size:var(--fs-xs);">(bundle)</span>` : ""}</td>
+          <td>${formatMoney(c.orderAmount || 0)}</td>
+          <td class="order-amount">${formatMoney(c.commissionAmount || 0)}</td>
+          <td>${commissionStatusBadge(c.status)}</td>
+          <td class="u-text-muted">${ms ? new Date(ms).toLocaleDateString() : "—"}</td>
+          <td>${actions}</td>
+        </tr>`;
+      }).join("");
     }
 
     function renderAffiliatesTable(){
@@ -19980,6 +20306,53 @@ Take a screenshot of the successful payment confirmation."></textarea>
         searchInput.addEventListener("input", (e) => { affiliateSearch = e.target.value; renderAffiliatesTable(); });
         searchInput.dataset.bound = "true";
       }
+      // SECTION 23j — added: commission ledger actions + status tabs
+      const commTbody = document.getElementById("adminCommissionsTableBody");
+      if (commTbody && commTbody.dataset.bound !== "true"){
+        commTbody.addEventListener("click", async (e) => {
+          const payBtn = e.target.closest("[data-mark-paid]");
+          const rejBtn = e.target.closest("[data-reject-commission]");
+          if (payBtn){
+            const id = payBtn.dataset.markPaid;
+            payBtn.disabled = true; payBtn.textContent = "Marking…";
+            try{
+              await window.YF.affiliate.adminMarkCommissionPaid(id);
+              window.YF.ui.toast({ type:"success", title:"Marked as paid", message:"The affiliate's balance has been debited accordingly." });
+              logActivity("affiliate-commission-paid", `Marked commission ${id} as paid`);
+            }catch(err){
+              console.error("YF.admin: mark commission paid failed", err);
+              window.YF.ui.toast({ type:"danger", title:"Couldn't mark as paid", message: err.message || "Please try again." });
+              payBtn.disabled = false; payBtn.textContent = "Mark Paid";
+            }
+          }
+          if (rejBtn){
+            if (!confirm("Reject this commission? It will be deducted from the affiliate's wallet balance.")) return;
+            const id = rejBtn.dataset.rejectCommission;
+            rejBtn.disabled = true; rejBtn.textContent = "Rejecting…";
+            try{
+              await window.YF.affiliate.adminRejectCommission(id);
+              window.YF.ui.toast({ type:"info", title:"Commission rejected", message:"The affiliate's balance has been adjusted." });
+              logActivity("affiliate-commission-rejected", `Rejected commission ${id}`);
+            }catch(err){
+              console.error("YF.admin: reject commission failed", err);
+              window.YF.ui.toast({ type:"danger", title:"Couldn't reject commission", message: err.message || "Please try again." });
+              rejBtn.disabled = false; rejBtn.textContent = "Reject";
+            }
+          }
+        });
+        commTbody.dataset.bound = "true";
+      }
+      const commTabs = document.getElementById("affCommissionStatusTabs");
+      if (commTabs && commTabs.dataset.bound !== "true"){
+        commTabs.dataset.bound = "true";
+        commTabs.querySelectorAll("[data-comm-filter]").forEach(tabBtn => {
+          tabBtn.addEventListener("click", () => {
+            commissionFilter = tabBtn.dataset.commFilter;
+            commTabs.querySelectorAll("[data-comm-filter]").forEach(b => b.classList.toggle("is-active", b === tabBtn));
+            renderCommissionsTable();
+          });
+        });
+      }
     }
 
     /** Entry point wired from handleRouteClick for data-route="admin-affiliates". */
@@ -19990,7 +20363,8 @@ Take a screenshot of the successful payment confirmation."></textarea>
       }
       ensureUsersLoaded();
       bindAffiliatesPage();
-      if (!affiliatesUnsub) subscribeAffiliates(); else renderAffiliatesTable();
+      if (!affiliatesUnsub) subscribeAffiliates(); else { renderAffiliatesTable(); renderAffiliateStats(); renderTopAffiliates(); }
+      if (!commissionsUnsub) subscribeCommissions(); else renderCommissionsTable();
     }
 
     /* ---------------------------------------------------------
@@ -20858,6 +21232,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
       val("siteFormBulkBuyMinQty", s.bulkBuyMinQty != null ? s.bulkBuyMinQty : 0);
       val("siteFormBulkBuyDiscount", s.bulkBuyDiscountPercent != null ? s.bulkBuyDiscountPercent : 0);
       val("siteFormReferralReward", s.referralRewardAmount != null ? s.referralRewardAmount : 0);
+      val("siteFormAffiliateCommission", s.affiliateFlatCommission != null ? s.affiliateFlatCommission : 5);
       val("siteFormPkrRate", s.pkrRate != null ? s.pkrRate : 290);
       val("siteFormContactEmail", s.contactEmail);
       val("siteFormContactPhone", s.contactPhone);
@@ -20907,6 +21282,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
         bulkBuyMinQty: Math.max(0, Number(get("siteFormBulkBuyMinQty")) || 0),
         bulkBuyDiscountPercent: Math.max(0, Math.min(100, Number(get("siteFormBulkBuyDiscount")) || 0)),
         referralRewardAmount: Math.max(0, Number(get("siteFormReferralReward")) || 0),
+        affiliateFlatCommission: Math.max(0, Number(get("siteFormAffiliateCommission")) || 0),
         pkrRate: Math.max(1, Number(get("siteFormPkrRate")) || 290),
         contactEmail: get("siteFormContactEmail"),
         contactPhone: get("siteFormContactPhone"),
