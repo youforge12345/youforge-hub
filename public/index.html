@@ -25,16 +25,17 @@
 <meta property="og:type" content="website">
 <meta property="og:title" id="metaOgTitle" content="YouForge Hub — Digital Marketplace">
 <meta property="og:description" id="metaOgDescription" content="A premium marketplace for digital products — templates, courses, plugins, presets and more.">
-<meta property="og:image" id="metaOgImage" content="">
+<meta property="og:image" id="metaOgImage" content="https://res.cloudinary.com/m6xnla9c/image/upload/v1783644954/site-branding/ziunooxe8hhr7ozu2qwl.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" id="metaTwitterTitle" content="YouForge Hub — Digital Marketplace">
 <meta name="twitter:description" id="metaTwitterDescription" content="A premium marketplace for digital products — templates, courses, plugins, presets and more.">
-<meta name="twitter:image" id="metaTwitterImage" content="">
+<meta name="twitter:image" id="metaTwitterImage" content="https://res.cloudinary.com/m6xnla9c/image/upload/v1783644954/site-branding/ziunooxe8hhr7ozu2qwl.jpg">
 
 <!-- Default favicon (inline SVG — stops the /favicon.ico 404).
      If the admin sets a favicon in Site Settings, applyFavicon()
      simply swaps this link's href, so the override still works. -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23000000'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='Georgia,serif' font-weight='700' font-size='28' fill='%23d4af37'%3EYF%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/jpeg" href="https://res.cloudinary.com/m6xnla9c/image/upload/v1783644954/site-branding/ziunooxe8hhr7ozu2qwl.jpg">
+<link rel="apple-touch-icon" href="https://res.cloudinary.com/m6xnla9c/image/upload/v1783644954/site-branding/ziunooxe8hhr7ozu2qwl.jpg">
 
 <!--
   ============================================================================
@@ -10932,17 +10933,25 @@ Take a screenshot of the successful payment confirmation."></textarea>
       document.body.style.overflow = "";
     }
     function initModals(){
-      // Close on backdrop click or [data-action="close-modal"]
-      document.querySelectorAll(".modal-backdrop").forEach(backdrop => {
-        backdrop.addEventListener("click", (e) => {
-          if (e.target === backdrop) closeModal(backdrop.id);
-        });
-      });
-      document.querySelectorAll('[data-action="close-modal"]').forEach(btn => {
-        btn.addEventListener("click", () => {
-          const backdrop = btn.closest(".modal-backdrop");
-          if (backdrop) closeModal(backdrop.id);
-        });
+      // Close on backdrop click or [data-action="close-modal"] —
+      // (SECTION 23g — fixed) event delegation on document, NOT a
+      // direct addEventListener per element found at setup time. Admin
+      // modals (product form, category form, bundle form, etc.) are
+      // injected into the DOM later — only once a session is
+      // confirmed admin/support/product_manager (see
+      // injectAdminMarkup()) — so binding directly to each modal/
+      // button found at setup time silently missed every admin
+      // modal's Cancel/Close button entirely. Delegating to
+      // `document` means any modal added later works the same way,
+      // no separate re-bind step needed.
+      document.addEventListener("click", (e) => {
+        const backdrop = e.target.closest(".modal-backdrop");
+        if (backdrop && e.target === backdrop){ closeModal(backdrop.id); return; }
+        const closeBtn = e.target.closest('[data-action="close-modal"]');
+        if (closeBtn){
+          const owner = closeBtn.closest(".modal-backdrop");
+          if (owner) closeModal(owner.id);
+        }
       });
       // Escape key closes any open modal
       document.addEventListener("keydown", (e) => {

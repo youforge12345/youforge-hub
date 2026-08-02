@@ -10,15 +10,15 @@
   "theme_color": "#000000",
   "icons": [
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23000000'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='Georgia,serif' font-weight='700' font-size='28' fill='%23d4af37'%3EYF%3C/text%3E%3C/svg%3E",
+      "src": "https://res.cloudinary.com/m6xnla9c/image/upload/v1783644954/site-branding/ziunooxe8hhr7ozu2qwl.jpg",
       "sizes": "any",
-      "type": "image/svg+xml",
+      "type": "image/jpeg",
       "purpose": "any"
     },
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23000000'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='Georgia,serif' font-weight='700' font-size='28' fill='%23d4af37'%3EYF%3C/text%3E%3C/svg%3E",
+      "src": "https://res.cloudinary.com/m6xnla9c/image/upload/v1783644954/site-branding/ziunooxe8hhr7ozu2qwl.jpg",
       "sizes": "any",
-      "type": "image/svg+xml",
+      "type": "image/jpeg",
       "purpose": "maskable"
     }
   ]
