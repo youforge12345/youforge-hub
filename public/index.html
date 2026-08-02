@@ -15884,7 +15884,17 @@ Take a screenshot of the successful payment confirmation."></textarea>
     return { init, open, close };
   })();
 
-
+  /* ============================================================
+     MODULE: YF.abandonedCart — Abandoned Cart Reminder (SECTION 23e
+     — added). Reads the SAME users/{uid}/cart docs YF.cart above
+     already subscribes to (each already carries a real Firestore
+     `addedAt` timestamp) — no new collection, no new Firestore reads.
+     Purely a client-side nudge: a dismissible banner + one toast per
+     session once an item has sat in the cart past the threshold, plus
+     one best-effort reminder email via the same "mail" collection
+     pattern used elsewhere in this app.
+     ============================================================ */
+  YF.abandonedCart = (function(){
     const IDLE_THRESHOLD_MS = 60 * 60000; // 60 minutes
     let alreadyToastedThisSession = false;
     let alreadyEmailedThisSession = false;
