@@ -2941,7 +2941,7 @@ html[data-theme="light"] .product-card:hover{
             <button class="btn btn--primary btn--lg" data-route="marketplace" data-nav id="heroCtaPrimaryBtn">Explore Marketplace</button>
             <button class="btn btn--outline btn--lg u-hidden" data-action="open-signup" id="heroCtaSecondaryBtn">Become a Seller</button><!-- hidden per owner request — remove u-hidden to restore -->
           </div>
-          <div class="hero__stats u-hidden"><!-- hidden per owner request — remove u-hidden to restore -->
+          <div class="hero__stats u-hidden" id="heroStatsRow"><!-- shown only if Site Settings → "Hero Stats Row" is enabled -->
             <div>
               <div class="hero__stat-num" id="statProducts">—</div>
               <div class="hero__stat-label">Products</div>
@@ -5120,6 +5120,13 @@ html[data-theme="light"] .product-card:hover{
                 <div class="settings-toggle-row__desc">Show the hand-picked Featured Products row.</div>
               </div>
               <label class="toggle-switch"><input type="checkbox" id="siteFormSectionFeatured" checked><span class="toggle-switch__track"></span></label>
+            </div>
+            <div class="settings-toggle-row">
+              <div>
+                <div class="settings-toggle-row__title">Hero Stats Row</div>
+                <div class="settings-toggle-row__desc">Show the Products/Creators/Downloads/Rating counters under the homepage hero. Off by default until your numbers look impressive.</div>
+              </div>
+              <label class="toggle-switch"><input type="checkbox" id="siteFormSectionHeroStats"><span class="toggle-switch__track"></span></label>
             </div>
             <div class="settings-toggle-row">
               <div>
@@ -16588,7 +16595,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
         downloads: "40K+",
         avgRating: "4.8/5"
       },
-      sections: { categories: true, featured: true, latest: true, popular: true, testimonials: true },
+      sections: { categories: true, featured: true, latest: true, popular: true, testimonials: true, heroStats: false },
       taxRatePercent: 0,
       pkrRate: 290,
       contactEmail: "support@youforgehub.com",
@@ -16725,6 +16732,12 @@ Take a screenshot of the successful payment confirmation."></textarea>
         const el = document.getElementById(map[key]);
         if (el) el.classList.toggle("u-hidden", sections[key] === false);
       });
+      // SECTION 23m — added. Opposite default from the rest: this row
+      // stays hidden unless the admin explicitly turns it ON (small
+      // early-stage numbers can undersell the site rather than build
+      // trust — see the Site Settings toggle's own description).
+      const heroStatsEl = document.getElementById("heroStatsRow");
+      if (heroStatsEl) heroStatsEl.classList.toggle("u-hidden", sections.heroStats !== true);
     }
 
     function applySite(data){
@@ -21983,6 +21996,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
       const sections = s.sections || {};
       chk("siteFormSectionCategories", sections.categories);
       chk("siteFormSectionFeatured", sections.featured);
+      chk("siteFormSectionHeroStats", sections.heroStats);
       chk("siteFormSectionLatest", sections.latest);
       chk("siteFormSectionPopular", sections.popular);
       chk("siteFormSectionTestimonials", sections.testimonials);
@@ -22032,6 +22046,7 @@ Take a screenshot of the successful payment confirmation."></textarea>
         sections: {
           categories: isChecked("siteFormSectionCategories"),
           featured: isChecked("siteFormSectionFeatured"),
+          heroStats: isChecked("siteFormSectionHeroStats"),
           latest: isChecked("siteFormSectionLatest"),
           popular: isChecked("siteFormSectionPopular"),
           testimonials: isChecked("siteFormSectionTestimonials")
