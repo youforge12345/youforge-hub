@@ -1034,6 +1034,37 @@ html[data-theme="light"] .btn--ghost .btn__ripple{ background: rgba(0,0,0,0.12);
 .hero__stat-num{ font-family: var(--font-display); font-size: var(--fs-2xl); color: var(--c-gold-300); line-height:1; }
 .hero__stat-label{ font-size: var(--fs-xs); color: var(--c-text-muted); text-transform:uppercase; letter-spacing:0.08em; margin-top: var(--sp-1); }
 
+/* ---- Hero category strip (SECTION 23o — added) ---- */
+.hero__category-strip{
+  display:flex; flex-wrap:wrap; gap: var(--sp-7);
+  margin-top: var(--sp-8); padding-top: var(--sp-6);
+  border-top: 1px solid var(--glass-border);
+}
+.hero__category-item{
+  display:flex; flex-direction:column; align-items:center; gap: var(--sp-2);
+  text-decoration:none; color: inherit; text-align:center;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.hero__category-item:hover{ transform: translateY(-3px); }
+.hero__category-icon{
+  width:44px; height:44px; border-radius: var(--r-md);
+  background: var(--glass-bg); border:1px solid var(--glass-border);
+  display:grid; place-items:center; color: var(--c-gold-300);
+  transition: border-color var(--dur-fast), background var(--dur-fast);
+}
+.hero__category-item:hover .hero__category-icon{
+  border-color: var(--glass-border-hi); background: var(--glass-bg-strong);
+}
+.hero__category-icon svg{ width:20px; height:20px; }
+.hero__category-label{ font-size: var(--fs-xs); font-weight:600; color: var(--c-text-body); white-space:nowrap; position:relative; padding-bottom: var(--sp-2); }
+.hero__category-label::after{
+  content:""; position:absolute; bottom:0; left:50%; transform:translateX(-50%);
+  width:4px; height:4px; border-radius:50%; background: var(--c-gold-500);
+}
+@media (max-width: 640px){
+  .hero__category-strip{ gap: var(--sp-5); justify-content:center; }
+}
+
 /* ============================================================
    SECTION 11c: SECTION HEADERS + CATEGORIES BAR
    ============================================================ */
@@ -2953,6 +2984,51 @@ html[data-theme="light"] .product-card:hover{
             <button class="btn btn--primary btn--lg" data-route="marketplace" data-nav id="heroCtaPrimaryBtn">Explore Products</button>
             <button class="btn btn--outline btn--lg u-hidden" data-action="open-signup" id="heroCtaSecondaryBtn">Become a Seller</button><!-- hidden per owner request — remove u-hidden to restore -->
           </div>
+
+          <!-- SECTION 23o: Hero category strip (added). Lightweight
+               inline-SVG icons (no heavy image assets) styled to
+               match the existing gold/black theme. Each item just
+               opens the Marketplace — category-specific deep-linking
+               can be wired in later if needed. -->
+          <div class="hero__category-strip">
+            <a href="#" class="hero__category-item" data-route="marketplace" data-nav>
+              <span class="hero__category-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 8-8"/><path d="M15 8h5v5"/></svg>
+              </span>
+              <span class="hero__category-label">Trading Tools</span>
+            </a>
+            <a href="#" class="hero__category-item" data-route="marketplace" data-nav>
+              <span class="hero__category-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5c-2-1.5-5-2-8-1v14c3-1 6-.5 8 1 2-1.5 5-2 8-1V4c-3-1-6-.5-8 1z"/><path d="M12 5v14"/></svg>
+              </span>
+              <span class="hero__category-label">Trading Journal</span>
+            </a>
+            <a href="#" class="hero__category-item" data-route="marketplace" data-nav>
+              <span class="hero__category-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21.2 15A9 9 0 1 1 12 3v9z"/><path d="M21.2 15a9 9 0 0 0-9-9v9z"/></svg>
+              </span>
+              <span class="hero__category-label">Finance Suite</span>
+            </a>
+            <a href="#" class="hero__category-item" data-route="marketplace" data-nav>
+              <span class="hero__category-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/><path d="M16 12a2 2 0 1 0 4 0 2 2 0 0 0-4 0z"/></svg>
+              </span>
+              <span class="hero__category-label">Wallet &amp; Money</span>
+            </a>
+            <a href="#" class="hero__category-item" data-route="marketplace" data-nav>
+              <span class="hero__category-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="10" y1="19" x2="14" y2="19"/></svg>
+              </span>
+              <span class="hero__category-label">Digital Apps</span>
+            </a>
+            <a href="#" class="hero__category-item" data-route="marketplace" data-nav>
+              <span class="hero__category-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+              </span>
+              <span class="hero__category-label">Blueprints &amp; More</span>
+            </a>
+          </div>
+
           <div class="hero__stats u-hidden" id="heroStatsRow"><!-- shown only if Site Settings → "Hero Stats Row" is enabled -->
             <div>
               <div class="hero__stat-num" id="statProducts">—</div>
